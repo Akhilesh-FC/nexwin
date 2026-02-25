@@ -32,24 +32,6 @@ class SettingController extends Controller
              return redirect()->route('setting');
     }
 	
-// public function support_setting()
-// {
-//     $settings = DB::select("SELECT * FROM customer_services");
-
-//     // ✅ NEW DATA (CONTACT TABLES)
-//     $contactUs = DB::table('contact_us')->first();
-//     $contactWithUs = DB::table('contact_with_us')->first();
-    
-    
-//     // NEW: WhatsApp Chat number
-//     $Chat_With_Us_view = DB::table('admin_settings')->where('id', 24)->first();
-
-//     return view(
-//         'work_order_assign.support_setting',
-//         compact('settings', 'contactUs', 'contactWithUs','Chat_With_Us_view')
-//     );
-// }
-
 
 public function support_setting()
 {

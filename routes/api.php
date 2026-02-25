@@ -18,7 +18,7 @@ use App\Http\Controllers\Api\CategoryLanguageController;
 use App\Http\Controllers\Api\CommissionController;
 
 
-	Route::post('/check_otp_pack', [PublicApiController::class,  'CheckOtp']);
+Route::post('/check_otp_pack', [PublicApiController::class,  'CheckOtp']);
 
 Route::get('/admin_notifications', [CategoryLanguageController::class, 'admin_notifications']);
 
@@ -79,13 +79,10 @@ Route::post('/AccountStatement', [PublicApiController::class, 'AccountStatement'
 Route::post('/crypto', [PublicApiController::class, 'crypto']);
 
 Route::controller(jiliApiController::class)->group(function () {
-    // Route::post('/jilliGame', 'jilliGame');   
-    // Route::get('/getJilliGames', 'getJilliGames');  
-   // Route::get('/games/{brand}', 'getGames');        // ✅ Get games list by brand
    Route::get('/get-games/{brand_id}', 'getGames');
    // ✅ Get games list by brand
     Route::post('/openGame', 'openGame');  
-    //Route::get('/brands',  'getBrands');
+   
     Route::get('/brands_selected', 'getSelectedBrands');
     
     // Example: /api/game-history-filter?user_id=34&game_id=3
@@ -172,7 +169,16 @@ Route::post('/add_account',[PublicApiController::class,'add_account']);
 Route::post('/add_usdt_wallet_address',[PublicApiController::class,'add_usdt_wallet_address']);
 Route::post('/view_usdt_wallet_address', [PublicApiController::class, 'view_usdt_wallet_address']);
 
+Route::post('update_usdt_wallet_address', [PublicApiController::class, 'update_usdt_wallet_address']);
+Route::post('delete_usdt_wallet_address', [PublicApiController::class, 'delete_usdt_wallet_address']);
+
 Route::get('/Account_view',[PublicApiController::class,'Account_view']);
+
+
+Route::post('/account/update', [PublicApiController::class, 'update_account']);
+Route::post('/account/delete', [PublicApiController::class, 'delete_account']);
+
+
 Route::post('/withdraw',[PublicApiController::class,'withdraw']);
 Route::post('/affiliation_wallet_add',[PublicApiController::class,'affiliation_wallet_add']);
 Route::post('/affiliate_withdraw',[PublicApiController::class,'affiliate_withdraw']);

@@ -229,7 +229,7 @@ class UserController extends Controller
         $request->image->move(public_path('uploads/paymodes'), $imageName);
     
        // STATIC BASE URL
-        $baseUrl = "https://newprojectadmin.codescarts.com";
+        $baseUrl = "https://root.nexwin.vip";
     
         // FULL URL
         $fullUrl = $baseUrl . '/uploads/paymodes/' . $imageName;
@@ -899,7 +899,7 @@ class UserController extends Controller
       // $refid= isset($referral_user_id)? $referral_user_id : '8';
          DB::select("UPDATE `users` SET `yesterday_register`=yesterday_register+1 WHERE `id`=$referral_user_id");
     	
-        return redirect(str_replace('https://admin.', 'http://', "https://newproject.codescarts.com/"));
+        return redirect(str_replace('https://admin.', 'http://', "https://nexwin.vip/"));
     		
         }
     }

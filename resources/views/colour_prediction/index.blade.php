@@ -716,8 +716,10 @@
       const gameId = $(this).data('gameid');
       const periodNo = $('#copy-period').text().trim();
 
-      if (!number || !gameId || !periodNo) {
-        return alert('Missing required data!');
+    //   if (!number || !gameId || !periodNo) {
+    //     return alert('Missing required data!');
+     if (number == null || gameId == null || periodNo === '') {
+      return alert('Missing required data!');
       }
 
       Swal.fire({

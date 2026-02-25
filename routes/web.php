@@ -66,6 +66,21 @@ Route::get('/play/{token}', [jiliApiController::class, 'launchGame']);
 
 
 
+Route::get('/notifications', [ AdminNotificationController::class, 'list'])->name('admin.notifications');
+
+Route::get('/notifications/view/{id}', [ AdminNotificationController::class, 'view' ])->name('admin.notification.view');
+
+Route::get('/admin/notification', [AdminNotificationController::class,'index'])->name('notification_admin');
+
+Route::post('/admin/send-notification', [AdminNotificationController::class, 'sendNotification'])->name('notification.store');
+
+// Route::get('/admin/notification', [AdminNotificationController::class,'index'])->name('notification_admin');
+
+// Route::post('/admin/send-notification', [AdminNotificationController::class, 'sendNotification'])
+//     ->name('notification.store');
+
+
+
  Route::get('/otp_history',[UserController::class, 'otpPackHistory'])->name('otp_history');  
 
 // ///////////////////////////////////////////////////////////////////////
@@ -95,15 +110,6 @@ Route::get('/illegal_users-inactive-{id}',[UserController::class, 'illegal_user_
 
 
 ///////////////////////////////////////////////////////////////	
-
-    
-
-
-
-Route::get('/admin/notification', [AdminNotificationController::class,'index'])->name('notification_admin');
-
-Route::post('/admin/send-notification', [AdminNotificationController::class, 'sendNotification'])
-    ->name('notification.store');
 
 
 
@@ -189,9 +195,16 @@ Route::post('/admin/send-notification', [AdminNotificationController::class, 'se
     Route::post('/demo_registers', [UserController::class, 'store'])->name('demo_register.store');
 
 
-	Route::get('/manual_qr',[Manual_qr_Controller::class, 'manual_qr_view'])->name('manual_qr');
-   	Route::post('/manual_qr/{id}', [Manual_qr_Controller::class, 'update_manual_qr'])->name('manual_qr.update');
-    Route::post('/manual_qr/status/{id}', [Manual_qr_Controller::class, 'updateStatus'])->name('manual_qr.status');
+// 	Route::get('/manual_qr',[Manual_qr_Controller::class, 'manual_qr_view'])->name('manual_qr');
+//   	Route::post('/manual_qr/{id}', [Manual_qr_Controller::class, 'update_manual_qr'])->name('manual_qr.update');
+//     Route::post('/manual_qr/status/{id}', [Manual_qr_Controller::class, 'updateStatus'])->name('manual_qr.status');
+   
+Route::get('/manual_qr', [Manual_qr_Controller::class, 'manual_qr_view'])->name('manual_qr');
+
+Route::post('/manual_qr/update/{id}', [Manual_qr_Controller::class, 'update_manual_qr'])->name('manual_qr.update');
+
+Route::post('/manual_qr/status/{id}',  [Manual_qr_Controller::class, 'updateStatus']) ->name('manual_qr.status');
+   
    
 
     Route::get('/usdt-conversion', [ConversionController::class, 'index'])->name('usdt_conversion.index');

@@ -4,7 +4,7 @@
     'name' => 'Laravel',
     'env' => 'local',
     'debug' => true,
-    'url' => 'https://newprojectadmin.codescarts.com/',
+    'url' => 'https://root.nexwin.vip/',
     'asset_url' => NULL,
     'timezone' => 'Asia/Kolkata',
     'locale' => 'en',
@@ -198,8 +198,8 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/framework/cache/data',
-        'lock_path' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/framework/cache/data',
+        'path' => '/www/wwwroot/root.nexwin.vip/storage/framework/cache/data',
+        'lock_path' => '/www/wwwroot/root.nexwin.vip/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -289,7 +289,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'newproject',
+        'database' => 'nexwin',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -299,9 +299,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'newproject',
-        'username' => 'newproject',
-        'password' => 'newproject',
+        'database' => 'nexwin',
+        'username' => 'nexwin',
+        'password' => 'nexwin',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -319,9 +319,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'newproject',
-        'username' => 'newproject',
-        'password' => 'newproject',
+        'database' => 'nexwin',
+        'username' => 'nexwin',
+        'password' => 'nexwin',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -334,9 +334,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'newproject',
-        'username' => 'newproject',
-        'password' => 'newproject',
+        'database' => 'nexwin',
+        'username' => 'nexwin',
+        'password' => 'nexwin',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -379,14 +379,14 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/app',
+        'root' => '/www/wwwroot/root.nexwin.vip/storage/app',
         'throw' => false,
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/app/public',
-        'url' => 'https://newprojectadmin.codescarts.com//storage',
+        'root' => '/www/wwwroot/root.nexwin.vip/storage/app/public',
+        'url' => 'https://root.nexwin.vip//storage',
         'visibility' => 'public',
         'throw' => false,
       ),
@@ -405,7 +405,7 @@
     ),
     'links' => 
     array (
-      '/www/wwwroot/Newprojectadmin.codescarts.com/public/storage' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/app/public',
+      '/www/wwwroot/root.nexwin.vip/public/storage' => '/www/wwwroot/root.nexwin.vip/storage/app/public',
     ),
   ),
   'hashing' => 
@@ -446,14 +446,14 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/logs/laravel.log',
+        'path' => '/www/wwwroot/root.nexwin.vip/storage/logs/laravel.log',
         'level' => 'debug',
         'replace_placeholders' => true,
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/logs/laravel.log',
+        'path' => '/www/wwwroot/root.nexwin.vip/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
         'replace_placeholders' => true,
@@ -518,7 +518,7 @@
       ),
       'emergency' => 
       array (
-        'path' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/logs/laravel.log',
+        'path' => '/www/wwwroot/root.nexwin.vip/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -594,7 +594,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => '/www/wwwroot/Newprojectadmin.codescarts.com/resources/views/vendor/mail',
+        0 => '/www/wwwroot/root.nexwin.vip/resources/views/vendor/mail',
       ),
     ),
   ),
@@ -666,7 +666,7 @@
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'newprojectadmin.codescarts.com',
+      5 => 'root.nexwin.vip',
     ),
     'guard' => 
     array (
@@ -707,7 +707,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/framework/sessions',
+    'files' => '/www/wwwroot/root.nexwin.vip/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -728,9 +728,9 @@
   array (
     'paths' => 
     array (
-      0 => '/www/wwwroot/Newprojectadmin.codescarts.com/resources/views',
+      0 => '/www/wwwroot/root.nexwin.vip/resources/views',
     ),
-    'compiled' => '/www/wwwroot/Newprojectadmin.codescarts.com/storage/framework/views',
+    'compiled' => '/www/wwwroot/root.nexwin.vip/storage/framework/views',
   ),
   'flare' => 
   array (
@@ -816,7 +816,7 @@
     array (
     ),
     'enable_runnable_solutions' => NULL,
-    'remote_sites_path' => '/www/wwwroot/Newprojectadmin.codescarts.com',
+    'remote_sites_path' => '/www/wwwroot/root.nexwin.vip',
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
     'settings_file_path' => '',

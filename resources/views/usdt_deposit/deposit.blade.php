@@ -24,7 +24,7 @@
                                     <th>Order Id</th>
                                     <th>INR Amount</th>
                                     <th>USDT Amount</th>
-                                    <!--<th>Screenshot</th>-->
+                                    <th>Screenshot</th>
                                     <th>Status</th>
                                     <th>Date</th>
                                 </tr>
@@ -39,17 +39,17 @@
                                     <td>{{ $item->order_id }}</td>
                                     <td>{{ $item->cash }}</td>
                                     <td>{{ $item->usdt_amount }}</td>
-                                    <!--<td><a href="{{$item->typeimage }}">view</a></td>-->
+                                    <td><a href="{{$item->typeimage }}">view</a></td>
                                     <td>
                                         @if($item->status == 1)
                                         <div class="dropdown">
                                             <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Pending
                                             </button>
-                                            <!--<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
-                                            <!--    <a class="dropdown-item" href="{{ route('usdt_success', $item->id) }}">Success</a>-->
-                                            <!--    <a class="dropdown-item" href="{{ route('usdt_reject', $item->id) }}">Reject</a>-->
-                                            <!--</div>-->
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{{ route('usdt_success', $item->id) }}">Success</a>
+                                                <a class="dropdown-item" href="{{ route('usdt_reject', $item->id) }}">Reject</a>
+                                            </div>
                                         </div>
                                         @elseif($item->status == 2)
                                         <button class="btn btn-success">Success</button>

@@ -299,15 +299,15 @@
        <!--               <?php endif; ?>-->
                       
                       
-                <!--         <?php if(in_array('usdt_qr_code', $allowed)): ?>-->
-                <!--<li><a href="<?php echo e(route('usdtqr')); ?>"><i class="fa fa-table purple_color2"></i> -->
-                <!--<span>USDT QR Code</span></a></li>-->
-                <!--<?php endif; ?>-->
+                         <?php if(in_array('usdt_qr_code', $allowed)): ?>
+                <li><a href="<?php echo e(route('usdtqr')); ?>"><i class="fa fa-table purple_color2"></i> 
+                <span>USDT QR Code</span></a></li>
+                <?php endif; ?>
                 
-                <!-- <?php if(in_array('usdt_conversion', $allowed)): ?>-->
-                <!--<li><a href="<?php echo e(route('usdt_conversion.index')); ?>"><i class="fa fa-table purple_color2"></i> -->
-                <!--<span>USDT Conversion Rate</span></a></li>-->
-                <!--<?php endif; ?>-->
+                 <?php if(in_array('usdt_conversion', $allowed)): ?>
+                <li><a href="<?php echo e(route('usdt_conversion.index')); ?>"><i class="fa fa-table purple_color2"></i> 
+                <span>USDT Conversion Rate</span></a></li>
+                <?php endif; ?>
                 
                 
                  <?php if(in_array('paymode_show', $allowed)): ?>
@@ -316,30 +316,30 @@
                 <?php endif; ?>
                 
                 
-                <!-- <?php if(in_array('usdt_deposit', $allowed)): ?>-->
-                <!--                                          <li>-->
-                <!--     <a href="#app20" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">-->
-                <!--<i class="fa fa-tasks  green_color"></i><span>Crypto Deposit</span></a>-->
-                <!--     <ul class="collapse list-unstyled" id="app20">-->
-                <!--   <li><a href="<?php echo e(route('usdt_deposit', 1)); ?>">Pending</a></li>-->
-                <!--<li><a href="<?php echo e(route('usdt_deposit', 2)); ?>">Success</a></li>-->
-                <!--<li><a href="<?php echo e(route('usdt_deposit',3)); ?>">Reject</a></li>-->
+                 <?php if(in_array('usdt_deposit', $allowed)): ?>
+                                                          <li>
+                     <a href="#app20" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                <i class="fa fa-tasks  green_color"></i><span>Crypto Deposit</span></a>
+                     <ul class="collapse list-unstyled" id="app20">
+                   <li><a href="<?php echo e(route('usdt_deposit', 1)); ?>">Pending</a></li>
+                <li><a href="<?php echo e(route('usdt_deposit', 2)); ?>">Success</a></li>
+                <li><a href="<?php echo e(route('usdt_deposit',3)); ?>">Reject</a></li>
                 
                 
-                <!--     </ul>-->
-                <!--  </li>-->
-                <!--  <?php endif; ?>-->
-                <!--                    <?php if(in_array('usdt_widthdrawl', $allowed)): ?>-->
-                <!--                           <li>-->
-                <!--             <a href="#app21" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">-->
-                <!--        <i class="fa fa-wrench purple_color2"></i>            <span>Crypto Withdrawal</span></a>-->
-                <!--             <ul class="collapse list-unstyled" id="app21">-->
-                <!--           <li><a href="<?php echo e(route('usdt_widthdrawl', 1)); ?>">Pending</a></li>-->
-                <!--        <li><a href="<?php echo e(route('usdt_widthdrawl', 2)); ?>">Success</a></li>-->
-                <!--        <li><a href="<?php echo e(route('usdt_widthdrawl',3)); ?>">Reject</a></li>-->
+                     </ul>
+                  </li>
+                  <?php endif; ?>
+                                    <?php if(in_array('usdt_widthdrawl', $allowed)): ?>
+                                           <li>
+                             <a href="#app21" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fa fa-wrench purple_color2"></i>            <span>Crypto Withdrawal</span></a>
+                             <ul class="collapse list-unstyled" id="app21">
+                           <li><a href="<?php echo e(route('usdt_widthdrawl', 1)); ?>">Pending</a></li>
+                        <li><a href="<?php echo e(route('usdt_widthdrawl', 2)); ?>">Success</a></li>
+                        <li><a href="<?php echo e(route('usdt_widthdrawl',3)); ?>">Reject</a></li>
                         
-                <!--             </ul>-->
-                <!--          </li><?php endif; ?>-->
+                             </ul>
+                          </li><?php endif; ?>
                           
                             <?php if(in_array('usdt_qr_code', $allowed)): ?>
                 <li><a href="<?php echo e(route('manual_qr')); ?>"><i class="fa fa-table purple_color2"></i> 

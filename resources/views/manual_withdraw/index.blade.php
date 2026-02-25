@@ -108,11 +108,15 @@ integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9If
                 <thead class="thead-dark">
                    <tr>
                       <th>Id</th>
-                      <th>UserId</th>
+                     <th>User Name</th>
                       <th>Beneficiary Name</th>
                       <th>INR Amount</th>
                       <th>Mobile</th>
                       <th>Order Id</th>
+                      <th>Upi Address</th>
+                      <th>Account Holder Name</th>
+                      <th>Account Number</th>
+                      <th>IFSC Code</th>
                       <th>Status</th>
                       <th>Date</th>
                     </tr>
@@ -121,11 +125,15 @@ integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9If
                   @foreach($widthdrawls as $item)
                    <tr>
                       <td>{{$item->id}}</td>
-                      <td>{{$item->user_id}}</td>
+                     <td>{{$item->uname}}</td>
                       <td>{{$item->uname}}</td>
                       <td>{{$item->amount}}</td>
                       <td>{{$item->mobile}}</td>   
                       <td>{{$item->order_id}}</td>
+                     <td>{{$item->upi_id ?? '-'}}</td>
+<td>{{$item->account_holder_name ?? '-'}}</td>
+<td>{{$item->account_number ?? '-'}}</td>
+<td>{{$item->ifsc_code ?? '-'}}</td>
                       @if($item->status==1)  
                         <td>
   <div class="dropdown">
@@ -134,7 +142,15 @@ integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9If
       <a class="dropdown-item" data-toggle="modal" data-target="#exampleModalCenter3{{$item->id}}" style="background-color: green; color: white;">
         Approved
       </a>
-      <a href="{{route('manual_widthdrawl.reject',$item->id)}}">Reject</a>
+      <!--<a href="{{route('manual_widthdrawl.reject',$item->id)}}">Reject</a>-->
+      
+      <form action="{{ route('manual_widthdrawl.reject', $item->id) }}" method="POST" style="display:inline;">
+    @csrf
+    <button type="submit" class="dropdown-item" style="background-color:red; color:white; border:none;">
+        Reject
+    </button>
+</form>
+      
     </div>
   </div>
 </td>

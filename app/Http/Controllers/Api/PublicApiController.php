@@ -568,7 +568,7 @@ class PublicApiController extends Controller
             'type'      => 'affiliate',   // ⭐ change name
             'order_id'  => $orderid,
             'status'    => 1,
-            'typeimage' => "https://root.winbhai.in/uploads/fastpay_image.png",
+            'typeimage' => "https://root.nexwin.vip/uploads/fastpay_image.png",
             'created_at'=> now(),
             'updated_at'=> now(),
         ]);
@@ -920,7 +920,7 @@ class PublicApiController extends Controller
         }
     
         // ✅ Step 4: Generate referral link
-       $referralLink = "https://winbhai.in/signup?campaign=" . $uniqueCode;
+       $referralLink = "https://nexwin.vip/signup?campaign=" . $uniqueCode;
 
     
         // ✅ Step 5: Insert into campaigns table
@@ -2443,8 +2443,8 @@ if ($giftClaims->isNotEmpty()) {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|integer|exists:users,id',
             'usdt_wallet_address_id' => 'required|integer|exists:usdt_wallet_address,id',
-            'amount_inr' => 'required|numeric|min:940',
             'amount' => 'numeric|min:10',
+            'amount_inr' => 'required|numeric|min:940',
             'type' => 'required' //0
         ]);
     
@@ -2539,11 +2539,24 @@ if ($giftClaims->isNotEmpty()) {
             mt_rand(1000, 9999) . 
             mt_rand(1000, 9999) . 
             mt_rand(10, 99);
+            
+            
+            // Get dynamic USDT deposit rate
+$depoistrateusdt = DB::table('payment_limits')
+    ->where('id', 14)
+    ->value('amount');
+
+if (!$depoistrateusdt) {
+    return response()->json([
+        'status' => 400,
+        'message' => 'USDT rate not found'
+    ]);
+}
     
         // Use DB transaction: insert withdraw_histories and deduct wallet atomically
         DB::beginTransaction();
         try {
-             $usdt_amount = $amount_inr * 94;
+             //$usdt_amount = $amount_inr * $depoistrateusdt;
             $insertData = [
                 'user_id' => $userid,
                 // store the account id (usdt_wallet_address id) as requested
@@ -2551,6 +2564,7 @@ if ($giftClaims->isNotEmpty()) {
                 // also store the actual wallet address string for convenience
                 'usdt_wallet_address' => $walletRow->wallet_address ?? null,
                 'amount' => $amount_inr,
+                //'usdt_amount' => $usdt_amount,
                 'usdt_amount' => $usdt_amount,
                 'type' => $type,
                 'order_id' => $order_id,
@@ -3234,8 +3248,79 @@ if ($campaignToIncrement) {
         }
     }
  
-    public function add_account(Request $request)
-    {
+//     public function add_account(Request $request)
+//     {
+//     // ✅ Ensure method is POST
+//     if (!$request->isMethod('post')) {
+//         return response()->json([
+//             'status' => 405,
+//             'message' => 'Unsupported request method'
+//         ], 405);
+//     }
+
+//     // ✅ Validate input
+//     $validator = Validator::make($request->all(), [
+//         'user_id' => 'required|exists:users,id',
+//         'name' => 'required|string|max:255',
+//         'account_number' => 'required|string|max:50',
+//         'ifsc_code' => 'required|string|max:20',
+//         // Optional fields can be added if needed later
+//         // 'bank_name' => 'nullable|string|max:255',
+//         // 'branch' => 'nullable|string|max:255',
+//         'upi_id' => 'nullable|string|max:255',
+//     ]);
+
+//     $validator->stopOnFirstFailure();
+
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'status' => 400,
+//             'message' => $validator->errors()->first()
+//         ], 400);
+//     }
+
+//     // ✅ Extract input data
+//     $user_id = $request->user_id;
+
+//     // ✅ Check if user already has account details
+//     // $existing = DB::table('account_details')->where('user_id', $user_id)->first();
+
+//     // if ($existing) {
+//     //     return response()->json([
+//     //         'status' => 400,
+//     //         'message' => 'Account already exists for this user.'
+//     //     ], 400);
+//     // }
+
+//     // ✅ Insert new account details
+//     $data = [
+//         'user_id' => $user_id,
+//         'name' => $request->name,
+//         'account_number' => $request->account_number,
+//         'ifsc_code' => $request->ifsc_code,
+//         'upi_id' => $request->upi_id,
+//         'status' => 1,
+//         'created_at' => now(),
+//         'updated_at' => now(),
+//     ];
+
+//     $inserted = DB::table('account_details')->insert($data);
+
+//     if ($inserted) {
+//         return response()->json([
+//             'status' => 200,
+//             'message' => 'Account added successfully!'
+//         ], 200);
+//     } else {
+//         return response()->json([
+//             'status' => 400,
+//             'message' => 'Internal error while inserting account!'
+//         ], 400);
+//     }
+// }
+
+public function add_account(Request $request)
+{
     // ✅ Ensure method is POST
     if (!$request->isMethod('post')) {
         return response()->json([
@@ -3244,16 +3329,13 @@ if ($campaignToIncrement) {
         ], 405);
     }
 
-    // ✅ Validate input
+    // ✅ Basic validation
     $validator = Validator::make($request->all(), [
         'user_id' => 'required|exists:users,id',
-        'name' => 'required|string|max:255',
-        'account_number' => 'required|string|max:50',
-        'ifsc_code' => 'required|string|max:20',
-        // Optional fields can be added if needed later
-        // 'bank_name' => 'nullable|string|max:255',
-        // 'branch' => 'nullable|string|max:255',
-        // 'upi_id' => 'nullable|string|max:255',
+        'upi_id' => 'nullable|string|max:255',
+        'name' => 'nullable|string|max:255',
+        'account_number' => 'nullable|string|max:50',
+        'ifsc_code' => 'nullable|string|max:20',
     ]);
 
     $validator->stopOnFirstFailure();
@@ -3265,30 +3347,59 @@ if ($campaignToIncrement) {
         ], 400);
     }
 
-    // ✅ Extract input data
     $user_id = $request->user_id;
 
-    // ✅ Check if user already has account details
-    // $existing = DB::table('account_details')->where('user_id', $user_id)->first();
+    // ✅ Check condition
 
-    // if ($existing) {
-    //     return response()->json([
-    //         'status' => 400,
-    //         'message' => 'Account already exists for this user.'
-    //     ], 400);
-    // }
+    // Condition 1: Only UPI
+    if ($request->filled('upi_id') && 
+        !$request->filled('name') && 
+        !$request->filled('account_number') && 
+        !$request->filled('ifsc_code')) {
 
-    // ✅ Insert new account details
-    $data = [
-        'user_id' => $user_id,
-        'name' => $request->name,
-        'account_number' => $request->account_number,
-        'ifsc_code' => $request->ifsc_code,
-        'status' => 1,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ];
+        $data = [
+            'user_id' => $user_id,
+            'name' => null,
+            'account_number' => null,
+            'ifsc_code' => null,
+            'upi_id' => $request->upi_id,
+            'status' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
 
+    // Condition 2: Bank Account
+    elseif ($request->filled('name')) {
+
+        if (!$request->filled('account_number') || !$request->filled('ifsc_code')) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Account number and IFSC code are required when name is provided.'
+            ], 400);
+        }
+
+        $data = [
+            'user_id' => $user_id,
+            'name' => $request->name,
+            'account_number' => $request->account_number,
+            'ifsc_code' => $request->ifsc_code,
+            'upi_id' => $request->upi_id, // optional
+            'status' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    // ❌ Invalid case
+    else {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Please provide either UPI ID or complete bank account details.'
+        ], 400);
+    }
+
+    // ✅ Insert
     $inserted = DB::table('account_details')->insert($data);
 
     if ($inserted) {
@@ -3303,6 +3414,119 @@ if ($campaignToIncrement) {
         ], 400);
     }
 }
+
+
+    public function update_account(Request $request)
+    {
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required|exists:users,id',
+        'account_id' => 'required|exists:account_details,id',
+    ]);
+
+    $validator->stopOnFirstFailure();
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()->first()
+        ], 400);
+    }
+
+    $user_id = $request->user_id;
+    $account_id = $request->account_id;
+
+    // Check account belongs to user
+    $account = DB::table('account_details')
+        ->where('id', $account_id)
+        ->where('user_id', $user_id)
+        ->first();
+
+    if (!$account) {
+        return response()->json([
+            'status' => 404,
+            'message' => 'Account not found for this user!'
+        ], 404);
+    }
+
+    $dataToUpdate = [];
+
+    if ($request->has('name')) {
+        $dataToUpdate['name'] = $request->name;
+    }
+
+    if ($request->has('account_number')) {
+        $dataToUpdate['account_number'] = $request->account_number;
+    }
+
+    if ($request->has('ifsc_code')) {
+        $dataToUpdate['ifsc_code'] = $request->ifsc_code;
+    }
+
+    if ($request->has('upi_id')) {
+        $dataToUpdate['upi_id'] = $request->upi_id;
+    }
+
+    if ($request->has('status')) {
+        $dataToUpdate['status'] = $request->status;
+    }
+
+    if (empty($dataToUpdate)) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Nothing to update!'
+        ], 400);
+    }
+
+    $dataToUpdate['updated_at'] = now();
+
+    DB::table('account_details')
+        ->where('id', $account_id)
+        ->where('user_id', $user_id)
+        ->update($dataToUpdate);
+
+    return response()->json([
+        'status' => 200,
+        'message' => 'Account updated successfully!'
+    ], 200);
+}
+
+    public function delete_account(Request $request)
+    {
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required|exists:users,id',
+        'account_id' => 'required|exists:account_details,id',
+    ]);
+
+    $validator->stopOnFirstFailure();
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()->first()
+        ], 400);
+    }
+
+    $user_id = $request->user_id;
+    $account_id = $request->account_id;
+
+    $deleted = DB::table('account_details')
+        ->where('id', $account_id)
+        ->where('user_id', $user_id)
+        ->delete();
+
+    if ($deleted) {
+        return response()->json([
+            'status' => 200,
+            'message' => 'Account deleted successfully!'
+        ], 200);
+    } else {
+        return response()->json([
+            'status' => 404,
+            'message' => 'Account not found!'
+        ], 404);
+    }
+}
+
 
     public function add_usdt_wallet_address(Request $request)
     {
@@ -3395,512 +3619,357 @@ if ($campaignToIncrement) {
             'data' => $wallets
         ]);
     }
-    // bank paymnent type=1
-    public function withdraw_old(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'account_id' => 'required',
-            'type' => 'required',
-            'amount' => 'required|numeric'
-        ]);
-        $validator->stopOnFirstFailure(); 
-        if($validator->fails()){
-             $response = [
-                            'status' => 400,
-                          'message' => $validator->errors()->first() 
-                          ]; 
-    		
-    		return response()->json($response,400);
-    		
-        }
     
-        $userid = $request->input('user_id');
-        $accountid = $request->input('account_id');
-        $amount = $request->input('amount');
-        $type = $request->input('type');
-       
-       $user_details = DB::table('account_details')->where('user_id', $userid)->first();
+   public function update_usdt_wallet_address(Request $request)
+{
+    // ✅ Validation
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required|integer|exists:users,id',
+        'id' => 'required|integer|exists:usdt_wallet_address,id',
+    ]);
 
-            $account_id = $user_details->id ?? null;
-            
-            if (empty($account_id)) {
-                return response()->json([
-                    'status' => 400,
-                    'message' => 'account_id is required'
-                ], 400);
-            }
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()->first()
+        ], 400);
+    }
 
-     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-         // Check if there's a pending withdrawal
-        $lastWithdrawal = DB::table('withdraw_histories')
-            ->where('user_id', $userid)
-            ->orderBy('created_at', 'desc')
-            ->first();
-    
-        if ($lastWithdrawal && $lastWithdrawal->status == 1) { // Assuming 1 is for pending
+    // ✅ Check if wallet belongs to that user
+    $wallet = DB::table('usdt_wallet_address')
+        ->where('id', $request->id)
+        ->where('user_id', $request->user_id)
+        ->first();
+
+    if (!$wallet) {
+        return response()->json([
+            'status' => 403,
+            'message' => 'Wallet not found for this user.'
+        ], 403);
+    }
+
+    // ✅ Dynamic Update Data
+    $updateData = [];
+
+    if ($request->filled('wallet_address')) {
+        $updateData['wallet_address'] = $request->wallet_address;
+    }
+
+    if ($request->filled('wallet_type')) {
+        if (!in_array($request->wallet_type, ['TRC20', 'ERC20', 'BEP20'])) {
             return response()->json([
                 'status' => 400,
-                'message' => 'You cannot withdraw again until your previous request is approved or rejected.'
+                'message' => 'Invalid wallet type.'
             ], 400);
         }
-    
-        // Limit to three withdrawals per day
-        $withdrawCount = DB::table('withdraw_histories')
-            ->where('user_id', $userid)
-            ->whereDate('created_at', now())
-            ->where('status', 2) // Assuming 2 is for successful withdrawal
-            ->count();
-    
-        if ($withdrawCount >= 5) {
-            $response = [
-                'status' => 400,
-                'message' => 'You can only withdraw 5 times in a day.'
-            ];
-            return response()->json($response, 400);
-        }
-    
-        
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        
-         $date = date('YmdHis');
-         
-            $rand = rand(11111, 99999);
-            $orderid = $date . $rand;
-        if ($amount >= 200 && $amount<=25000) {
-          
-            $wallet=DB::select("SELECT `wallet`,`recharge`,`first_recharge`,`winning_wallet` FROM `users` WHERE id=$userid");
-          $user_wallet=$wallet[0]->wallet;
-          $user_recharge=$wallet[0]->recharge;
-          //dd($user_recharge);
-          $first_recharge=$wallet[0]->first_recharge;
-          if($user_recharge == 0){
-              if($first_recharge == 1){
-            if($user_wallet >= $amount){
-          $data= DB::table('withdraw_histories')->insert([
-        'user_id' => $userid,
-        'amount' => $amount,
-        'account_id' => $accountid,
-        'type' => $type,
-       // 'upi_id' =>$upi_id,
-        'order_id' => $orderid,
-        'status' => 1,
-    	'typeimage'=>"https://root.winbhai.in/uploads/fastpay_image.png",
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-          DB::select("UPDATE `users` SET `wallet`=`wallet`-$amount,`winning_wallet`=`winning_wallet`-$amount WHERE id=$userid;");
-     if ($data) {
-                 $response = [
-            'status' =>200,
-            'message' => 'Withdraw Request Successfully ..!',
-        ];
-    
-        return response()->json($response,200);
-    
-            } else {
-                 $response = [
-            'status' =>400,
-            'message' => 'Internal error..!',
-        ];
-    
-        return response()->json($response,400);
-                
-            }
-            }else{
-          $response = [
-            'status' =>400,
-            'message' => 'insufficient Balance..!',
-        ];
-    
-        return response()->json($response,400);
-     }  
-              }else{
-          $response = [
-            'status' =>400,
-            'message' => 'first rechage is mandatory..!',
-        ];
-    
-        return response()->json($response,400);
-     }     
-          }else {
-             $response = [
-            'status' =>400,
-            'message' => 'need to bet amount 0 to be able to Withdraw',
-        ];
-    
-        return response()->json($response,400);   
-          }
-            
-        }else{
-            $response['message'] = "minimum Withdraw 200 And Maximum Withdraw 25000";
-                $response['status'] = "400";
-                return response()->json($response,200);
-        }
-      
+        $updateData['wallet_type'] = $request->wallet_type;
     }
+
+    if ($request->filled('phone_no')) {
+        if (!preg_match('/^[0-9]{10,15}$/', $request->phone_no)) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Invalid phone number format.'
+            ], 400);
+        }
+        $updateData['phone_no'] = $request->phone_no;
+    }
+
+    if (empty($updateData)) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'No fields provided to update.'
+        ], 400);
+    }
+
+    $updateData['updated_at'] = now();
+
+    DB::table('usdt_wallet_address')
+        ->where('id', $request->id)
+        ->where('user_id', $request->user_id)
+        ->update($updateData);
+
+    return response()->json([
+        'status' => 200,
+        'message' => 'Wallet address updated successfully.'
+    ]);
+}
+public function delete_usdt_wallet_address(Request $request)
+{
+    // ✅ Validation
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required|integer|exists:users,id',
+        'id' => 'required|integer|exists:usdt_wallet_address,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()->first()
+        ], 400);
+    }
+
+    // ✅ Delete only if wallet belongs to user
+    $deleted = DB::table('usdt_wallet_address')
+        ->where('id', $request->id)
+        ->where('user_id', $request->user_id)
+        ->delete();
+
+    if (!$deleted) {
+        return response()->json([
+            'status' => 403,
+            'message' => 'Wallet not found or does not belong to this user.'
+        ], 403);
+    }
+
+    return response()->json([
+        'status' => 200,
+        'message' => 'Wallet address deleted successfully.'
+    ]);
+}
     
     ////// Withdraw /////
-public function withdraw(Request $request)
+//     public function withdraw(Request $request)
+//     {
+//         $validator = Validator::make($request->all(), [
+//             'user_id' => 'required',
+//             'account_id' => 'required',
+//             'type' => 'required',
+//             'amount' => 'required|numeric'
+//         ]);
+//         $validator->stopOnFirstFailure(); 
+//         if($validator->fails()){
+//              $response = [
+//                             'status' => 400,
+//                           'message' => $validator->errors()->first() 
+//                           ]; 
+    		
+//     		return response()->json($response,400);
+    		
+//         }
+    
+//         $userid = $request->input('user_id');
+//         $accountid = $request->input('account_id');
+//         $amount = $request->input('amount');
+//         $type = $request->input('type');
+       
+//         $user_details = DB::table('account_details')->where('user_id', $userid)->first();
+          
+//          // Check if there's a pending withdrawal
+//         $lastWithdrawal = DB::table('withdraw_histories')
+//             ->where('user_id', $userid)
+//             ->orderBy('created_at', 'desc')
+//             ->first();
+    
+//         if ($lastWithdrawal && $lastWithdrawal->status == 1) { // Assuming 1 is for pending
+//             return response()->json([
+//                 'status' => 400,
+//                 'message' => 'You cannot withdraw again until your previous request is approved or rejected.'
+//             ], 400);
+//         }
+    
+//         // Limit to three withdrawals per day
+//         $withdrawCount = DB::table('withdraw_histories')
+//             ->where('user_id', $userid)
+//             ->whereDate('created_at', now())
+//             ->where('status', 2) // Assuming 2 is for successful withdrawal
+//             ->count();
+    
+//         if ($withdrawCount >= 3) {
+//             $response = [
+//                 'status' => 400,
+//                 'message' => 'You can only withdraw 3 times in a day.'
+//             ];
+//             return response()->json($response, 400);
+//         }
+    
+//          $date = date('YmdHis');
+         
+//             $rand = rand(11111, 99999);
+//             $orderid = $date . $rand;
+//         if ($amount >= 300 && $amount<=25000) {
+          
+//             $wallet=DB::select("SELECT `wallet`,`recharge`,`first_recharge`,`winning_wallet` FROM `users` WHERE id=$userid");
+//           $user_wallet=$wallet[0]->wallet;
+//           $user_recharge=$wallet[0]->recharge;
+//     		 $winning_wallet=$wallet[0]->winning_wallet;
+//           //dd($user_recharge);
+//           $first_recharge=$wallet[0]->first_recharge;
+//           if($user_recharge == 0){
+//               if($first_recharge == 1){
+//             if($user_wallet >= $amount){
+//           $data= DB::table('withdraw_histories')->insert([
+//         'user_id' => $userid,
+//         'amount' => $amount,
+//         'account_id' => $accountid,
+//         'type' => $type,
+//       // 'upi_id' =>$upi_id,
+//         'order_id' => $orderid,
+//         'status' => 1,
+//     	'typeimage'=>"http://root.nexwin.vip/uploads/fastpay_image.png",
+//         'created_at' => now(),
+//         'updated_at' => now(),
+//     ]);
+//           DB::select("UPDATE `users` SET `wallet`=`wallet`-$amount WHERE id=$userid;");
+//      if ($data) {
+//                  $response = [
+//             'status' =>200,
+//             'message' => 'Withdraw Request Successfully ..!',
+//         ];
+    
+//         return response()->json($response,200);
+    
+//             } else {
+//                  $response = [
+//             'status' =>400,
+//             'message' => 'Internal error..!',
+//         ];
+    
+//         return response()->json($response,400);
+                
+//             }
+//             }else{
+//           $response = [
+//             'status' =>400,
+//             'message' => 'insufficient Balance..!',
+//         ];
+    
+//         return response()->json($response,400);
+//      }  
+//               }else{
+//           $response = [
+//             'status' =>400,
+//             'message' => 'first rechage is mandatory..!',
+//         ];
+    
+//         return response()->json($response,400);
+//      }     
+//           }else {
+//              $response = [
+//             'status' =>400,
+//             'message' => 'need to bet amount 0 to be able to Withdraw',
+//         ];
+    
+//         return response()->json($response,400);   
+//           }
+            
+//         }else{
+//             $response['message'] = "minimum Withdraw 200 And Maximum Withdraw 25000";
+//                 $response['status'] = "400";
+//                 return response()->json($response,200);
+//         }
+      
+// }
+    
+  public function withdraw(Request $request)
 {
-
     $validator = Validator::make($request->all(), [
         'user_id' => 'required',
         'account_id' => 'required',
         'type' => 'required',
         'amount' => 'required|numeric'
     ]);
+
     $validator->stopOnFirstFailure(); 
+
     if($validator->fails()){
-         $response = [
-                        'status' => 400,
-                      'message' => $validator->errors()->first() 
-                      ]; 
-		
-		return response()->json($response,400);
-		
+        return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()->first()
+        ], 400);
     }
 
-    $userid = $request->input('user_id');
+    $userid   = $request->input('user_id');
     $accountid = $request->input('account_id');
-    $amount = $request->input('amount');
-    $type = $request->input('type');
-   
-    $user_details = DB::table('account_details')->where('user_id', $userid)->first();
-      
-     // Check if there's a pending withdrawal
+    $amount   = $request->input('amount');
+    $type     = $request->input('type');
+
+    // Check pending withdrawal
     $lastWithdrawal = DB::table('withdraw_histories')
         ->where('user_id', $userid)
         ->orderBy('created_at', 'desc')
         ->first();
 
-    if ($lastWithdrawal && $lastWithdrawal->status == 1) { // Assuming 1 is for pending
+    if ($lastWithdrawal && $lastWithdrawal->status == 1) {
         return response()->json([
             'status' => 400,
             'message' => 'You cannot withdraw again until your previous request is approved or rejected.'
         ], 400);
     }
 
-    // Limit to three withdrawals per day
+    // Limit 3 withdrawals per day
     $withdrawCount = DB::table('withdraw_histories')
         ->where('user_id', $userid)
         ->whereDate('created_at', now())
-        ->where('status', 2) // Assuming 2 is for successful withdrawal
+        ->where('status', 2)
         ->count();
 
     if ($withdrawCount >= 3) {
-        $response = [
+        return response()->json([
             'status' => 400,
             'message' => 'You can only withdraw 3 times in a day.'
-        ];
-        return response()->json($response, 400);
-    }
-
-     $date = date('YmdHis');
-     
-        $rand = rand(11111, 99999);
-        $orderid = $date . $rand;
-    if ($amount >= 300 && $amount<=25000) {
-      
-        $wallet=DB::select("SELECT `wallet`,`recharge`,`first_recharge`,`winning_wallet` FROM `users` WHERE id=$userid");
-      $user_wallet=$wallet[0]->wallet;
-      $user_recharge=$wallet[0]->recharge;
-		 $winning_wallet=$wallet[0]->winning_wallet;
-      //dd($user_recharge);
-      $first_recharge=$wallet[0]->first_recharge;
-      if($user_recharge == 0){
-          if($first_recharge == 1){
-        if($user_wallet >= $amount){
-      $data= DB::table('withdraw_histories')->insert([
-    'user_id' => $userid,
-    'amount' => $amount,
-    'account_id' => $accountid,
-    'type' => $type,
-   // 'upi_id' =>$upi_id,
-    'order_id' => $orderid,
-    'status' => 1,
-	'typeimage'=>"https://newprojectadmin.codescarts.com/uploads/fastpay_image.png",
-    'created_at' => now(),
-    'updated_at' => now(),
-]);
-      DB::select("UPDATE `users` SET `wallet`=`wallet`-$amount WHERE id=$userid;");
- if ($data) {
-             $response = [
-        'status' =>200,
-        'message' => 'Withdraw Request Successfully ..!',
-    ];
-
-    return response()->json($response,200);
-
-        } else {
-             $response = [
-        'status' =>400,
-        'message' => 'Internal error..!',
-    ];
-
-    return response()->json($response,400);
-            
-        }
-        }else{
-      $response = [
-        'status' =>400,
-        'message' => 'insufficient Balance..!',
-    ];
-
-    return response()->json($response,400);
- }  
-          }else{
-      $response = [
-        'status' =>400,
-        'message' => 'first rechage is mandatory..!',
-    ];
-
-    return response()->json($response,400);
- }     
-      }else {
-         $response = [
-        'status' =>400,
-        'message' => 'need to bet amount 0 to be able to Withdraw',
-    ];
-
-    return response()->json($response,400);   
-      }
-        
-    }else{
-        $response['message'] = "minimum Withdraw 200 And Maximum Withdraw 25000";
-            $response['status'] = "400";
-            return response()->json($response,200);
-    }
-  
-}
-    
-    public function withdraw_23_02_2026(Request $request)
-{
-    /* ===============================
-       1️⃣ VALIDATION
-    =============================== */
-    $validator = Validator::make(
-        $request->all(),
-        [
-            'user_id'    => 'required',
-            'account_id' => 'required',
-            'type'       => 'required',
-            'amount'     => 'required|numeric'
-        ],
-        [
-            'account_id.required' => 'Please select your account'
-        ]
-    );
-
-    $validator->stopOnFirstFailure();
-
-    if ($validator->fails()) {
-        return response()->json([
-            'status'  => 400,
-            'message' => $validator->errors()->first()
         ], 400);
     }
-    
-        $userid    = $request->user_id;
-        $accountid = $request->account_id;
-        $amount    = (int)$request->amount;
-        $type      = $request->type;
-    
-        /* ===============================
-           2️⃣ ACCOUNT CHECK
-        =============================== */
-        $account = DB::table('account_details')
-            ->where('id', $accountid)
-            ->where('user_id', $userid)
-            ->first();
-    
-        if (!$account) {
-            return response()->json([
-                'status'  => 400,
-                'message' => 'Invalid account'
-            ], 400);
-        }
-    
-        /* ===============================
-           3️⃣ USER WALLET CHECK
-        =============================== */
-        $user = DB::table('users')->where('id', $userid)->first();
-    
-        if ($user->wallet < $amount) {
-            return response()->json([
-                'status'  => 400,
-                'message' => 'Insufficient balance'
-            ], 400);
-        }
-    
-        if ($amount < 200 || $amount > 25000) {
-            return response()->json([
-                'status'  => 400,
-                'message' => 'Min 200, Max 25000'
-            ], 400);
-        }
-    
-        /* ===============================
-           4️⃣ CREATE WITHDRAW REQUEST
-        =============================== */
-        $orderid = date('YmdHis') . rand(11111, 99999);
-    
-        $withdrawId = DB::table('withdraw_histories')->insertGetId([
-            'user_id'    => $userid,
-            'amount'     => $amount,
+
+    if ($amount < 300 || $amount > 25000) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Minimum Withdraw 300 And Maximum Withdraw 25000'
+        ], 400);
+    }
+
+    // Get user wallet
+    $wallet = DB::table('users')
+        ->where('id', $userid)
+        ->first(['wallet']);
+
+    if (!$wallet || $wallet->wallet < $amount) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Insufficient Balance..!'
+        ], 400);
+    }
+
+    $orderid = date('YmdHis') . rand(11111, 99999);
+
+    // Start transaction for safety
+    DB::beginTransaction();
+
+    try {
+
+        DB::table('withdraw_histories')->insert([
+            'user_id' => $userid,
+            'amount' => $amount,
             'account_id' => $accountid,
-            'type'       => $type,
-            'order_id'   => $orderid,
-            'status'     => 1,
+            'type' => $type,
+            'order_id' => $orderid,
+            'status' => 1,
+            'typeimage' => "http://root.nexwin.vip/uploads/fastpay_image.png",
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    
-        /* ===============================
-           5️⃣ WALLET CUT
-        =============================== */
-        DB::update(
-            "UPDATE users SET wallet = wallet - ?, winning_wallet = winning_wallet - ? WHERE id = ?",
-            [$amount, $amount, $userid]
-        );
-    
-        /* ===============================
-           6️⃣ GATEWAY PAYLOAD
-           ⚠️ TOKEN PAYLOAD ME NAHI HOGA
-        =============================== */
-        $payload = [
-            "merchant_id" => "INDIANPAY00INDIANPAY00157",
-            "merchant_token" => "JbmrWhThEjqzmip48rlTX4KZdzZ6IJkP",
-            "account_no"  => trim($account->account_number),
-            "ifsccode"    => trim($account->ifsc_code),
-            "amount"      => $amount,
-            "bankname"    => trim($account->bank_name),
-            "orderid"     => rand(11111111111111, 99999999999999),
-            "remark"      => "Withdraw",
-            "name"        => trim($account->name),
-            "contact"     => trim($user->mobile),
-            "email"       => "noemail@bappaventures.com",
-            "transfer_type" => "IMPS",
-            "mode"          => "BANK",
-            "callback_url"  => url('/api/gateway/bappaventures/callback')
-        ];
-    
-        // ✅ PAYLOAD LOG
-        file_put_contents(
-            storage_path('logs/withdraw_payload.log'),
-            "\n\n==== ".now()." ====\n".json_encode($payload, JSON_PRETTY_PRINT),
-            FILE_APPEND
-        );
-    
-        /* ===============================
-           7️⃣ SALT GENERATION (FINAL & CORRECT)
-        =============================== */
-        $payloadJson = json_encode($payload, JSON_UNESCAPED_SLASHES);
-       // $token = "JbmrWhThEjqzmip48rlTX4KZdzZ6IJkP";
-    
-        $salt = base64_encode($payloadJson);
-    
-        //$salt = base64_encode($payloadJson . $token);
-    
-        $base = [
-            "salt" => $salt
-        ];
-    
-        // ✅ SALT DEBUG LOG
-        file_put_contents(
-            storage_path('logs/salt_debug.log'),
-            "\n\n==== ".now()." ====\n".$payloadJson."\nTOKEN\n",
-            FILE_APPEND
-        );
-    
-        /* ===============================
-           8️⃣ CURL CALL
-        =============================== */
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => 'https://bappaventures.com/api/single_transaction',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST           => true,
-            CURLOPT_TIMEOUT        => 30,
-            CURLOPT_POSTFIELDS     => json_encode($base),
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-        ]);
-    
-        $response = curl_exec($curl);
-    
-        if (curl_errno($curl)) {
-            $error = curl_error($curl);
-            curl_close($curl);
-    
-            DB::update(
-                "UPDATE withdraw_histories SET status = 3, rejectmsg = ? WHERE id = ?",
-                [$error, $withdrawId]
-            );
-    
-            DB::update(
-                "UPDATE users SET wallet = wallet + ?, winning_wallet = winning_wallet + ? WHERE id = ?",
-                [$amount, $amount, $userid]
-            );
-    
-            return response()->json([
-                'status'  => 400,
-                'message' => 'Curl Error',
-                'error'   => $error
-            ]);
-        }
-    
-        curl_close($curl);
-    
-        // ✅ RESPONSE LOG
-        file_put_contents(
-            storage_path('logs/withdraw_gateway.log'),
-            "\n\n==== ".now()." ====\n".$response,
-            FILE_APPEND
-        );
-    
-        /* ===============================
-           9️⃣ RESPONSE HANDLE
-        =============================== */
-        $res = json_decode($response, true);
-    
-        if (
-            (isset($res['status']) && in_array($res['status'], [200, true, 'SUCCESS'])) ||
-            (isset($res['error']) && $res['error'] === 'Missing Parameter')
-        ) {
-            DB::update(
-                "UPDATE withdraw_histories SET status = 2, response = ? WHERE id = ?",
-                [$response, $withdrawId]
-            );
-    
-            return response()->json([
-                'status'  => 200,
-                'message' => 'Withdraw successful, amount sent to bank'
-            ]);
-        }
-    
-        /* ===============================
-           🔴 FAILED
-        =============================== */
-        $msg = $res['message'] ?? ($res['error'] ?? 'Gateway rejected payout');
-    
-        DB::update(
-            "UPDATE withdraw_histories SET status = 3, rejectmsg = ?, response = ? WHERE id = ?",
-            [$msg, $response, $withdrawId]
-        );
-    
-        DB::update(
-            "UPDATE users SET wallet = wallet + ?, winning_wallet = winning_wallet + ? WHERE id = ?",
-            [$amount, $amount, $userid]
-        );
-    
-        return response()->json([
-            'status' => 400,
-            'message' => 'Withdraw failed, amount refunded',
-            'gateway_message' => $msg
-        ]);
-}
 
+        DB::table('users')
+            ->where('id', $userid)
+            ->decrement('wallet', $amount);
+
+        DB::commit();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Withdraw Request Successfully..!'
+        ], 200);
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'status' => 500,
+            'message' => 'Internal Server Error'
+        ], 500);
+    }
+}
     public function claim_list(Request $request)
     {
        
@@ -4476,7 +4545,7 @@ return response()->json([
         $responseData = [
             'id' => 0,
            
-            'apk_link' => 'https://newprojectadmin.codescarts.com/public/newprojecti.apk',
+            'apk_link' => 'https://root.nexwin.vip/public/nexwin.apk',
            
         ];
 
@@ -4519,6 +4588,10 @@ return response()->json([
 
     $paymentLimit = DB::table('payment_limits')
         ->where('id', 14)
+        ->value('amount');
+        
+       $depoistrateusdt = DB::table('payment_limits')
+        ->where('id', 13)
         ->value('amount');
 
     $main_wallet = $data->wallet ?? 0;
@@ -4621,8 +4694,8 @@ return response()->json([
         'crypto_min_withdraw' => 10,
         'crypto_max_withdraw' => 500,
         'last_login_time' => now()->format('Y-m-d H:i:s'),
-        'apk_link' => 'https://root.winbhai.in/public/winbhai.apk',
-        'referral_code_url' => "https://winbhai.in/signup?campaign={$data->referral_code}",
+        'apk_link' => 'https://root.nexwin.vip/public/nexwin.apk',
+        'referral_code_url' => "https://nexwin.vip/signup?campaign={$data->referral_code}",
         'aviator_link' => "https://foundercodetech.com",
         'aviator_event_name' => "gbaviator",
         'wingo_socket_url' => "https://aviatorudaan.com/",
@@ -4630,6 +4703,7 @@ return response()->json([
         'status' => "1",
         'type' => "0",
         'withdraw_conversion_rate' => $paymentLimit,
+        'deposit_conversion_rate' => $depoistrateusdt,
         'available_commission_to_withdraw' => (float)$availableToWithdraw,
         'whatsapp_deposit_number' => $whatsappDepositNumber,
         'chat_on_whatsapp' => $chat_on_whatsapp,
@@ -4644,206 +4718,6 @@ return response()->json([
         'data' => $responseData
     ]);
 }
-
-// 	public function profile(Request $request)
-//     {
-//     $uid = $request->id;
-
-//     if (empty($uid)) {
-//         return response()->json([
-//             'status' => 400,
-//             'message' => 'UID Required'
-//         ]);
-//     }
-
-//     // Fetch user data with admin settings using leftJoin
-//     $data = DB::table('users as u')
-//         ->select(
-//             'u.*',
-//             'a1.longtext as minimum_withdraw',
-//             'a2.longtext as maximum_withdraw'
-//         )
-//         ->leftJoin('admin_settings as a1', function ($join) {
-//             $join->on('a1.id', '=', DB::raw('15'));
-//         })
-//         ->leftJoin('admin_settings as a2', function ($join) {
-//             $join->on('a2.id', '=', DB::raw('16'));
-//         })
-//         ->where('u.id', $uid)
-//         ->first();
-
-//     if (!$data) {
-//         return response()->json([
-//             'status' => 400,
-//             'message' => 'No data found'
-//         ]);
-//     }
-
-//     // Fetch payment limit (id = 14)
-//     $paymentLimit = DB::table('payment_limits')->where('id', 14)->value('amount');
-
-//     // Check if user is active
-//     if ($data->status != 1) {
-//         return response()->json([
-//             'status' => 401,
-//             'message' => 'User blocked by admin'
-//         ]);
-//     }
-
-//     // Wallet calculations
-//     $main_wallet = $data->wallet ?? 0;
-//     $thirdparty_wallet = $data->third_party_wallet ?? 0;
-//     $total_wallet = $main_wallet + $thirdparty_wallet;
-
-
-//     // =========================================================
-//     // ⭐ COMMISSION WITHDRAW CALCULATION (ADDED HERE)
-//     // =========================================================
-
-//     // Step 1: Get all campaigns of user
-//     $campaigns = DB::table('campaigns')->where('user_id', $uid)->get();
-//     $availableToWithdraw = 0;
-//     $totalCommission = 0;
-//     $withdrawnCommission = 0;
-
-//     if (!$campaigns->isEmpty()) {
-
-//         // Get unique referral codes
-//         $uniqueCodes = $campaigns->pluck('unique_code')->toArray();
-
-//         // Get users registered via those codes
-//         $registeredUsers = DB::table('users')
-//             ->whereIn('referral_code', $uniqueCodes)
-//             ->get();
-
-//         $userIds = $registeredUsers->pluck('id')->toArray();
-
-//         if (!empty($userIds)) {
-//             // Sum commission from referred users
-//             $totalCommission = DB::table('users')
-//                 ->whereIn('id', $userIds)
-//                 ->sum('commission');
-//         }
-
-//         // Withdrawn commission
-//         $withdrawnCommission = DB::table('withdraw_histories')
-//             ->where('user_id', $uid)
-//             ->where('status', 1)
-//             ->sum('amount');
-
-//         // Available balance (never negative)
-//         $availableToWithdraw = max(0, $totalCommission - $withdrawnCommission);
-//     }
-    
-            
-    
-//     // bets table
-//         $betsExposure = DB::table('bets')
-//             ->where('userid', $uid)
-//             ->where('status', 0) // ✅ agar active bet ke liye status column hai
-//             ->sum('amount');
-        
-//         // aviator_bet table
-//         $aviatorExposure = DB::table('aviator_bet')
-//             ->where('uid', $uid)
-//             ->where('status', 0)
-//             ->sum('amount');
-        
-//         // chicken_bets table
-//         $chickenExposure = DB::table('chicken_bets')
-//             ->where('user_id', $uid)
-//             ->where('status', 0)
-//             ->sum('amount');
-        
-//         // Total net exposure
-//         $netExposure = ($betsExposure ?? 0) 
-//                      + ($aviatorExposure ?? 0) 
-//                      + ($chickenExposure ?? 0);
-        
-//             // ===============================================
-//         // CASHABLE AMOUNT (main_wallet - thirdparty_wallet - netExposure)
-      
-//         // Never allow negative
-//         $cashable_amount = max(0, $main_wallet);
-
-//     // =========================================================
-//     // END OF COMMISSION CALCULATION
-//     // =========================================================
-    
-//     // Fetch WhatsApp deposit number (id = 17)
-//     $whatsappDepositNumber = DB::table('admin_settings')
-//         ->where('id', 17)
-//         ->value('longtext');
-        
-//     $chat_on_whatsapp = DB::table('admin_settings')
-//         ->where('id', 24)
-//         ->value('longtext');
-        
-//         $affilation_withdraw_min = DB::table('admin_settings')
-//         ->where('id', 25)
-//         ->value('longtext');
-        
-//          $affilation_withdraw_max = DB::table('admin_settings')
-//         ->where('id', 26)
-//         ->value('longtext');
-
-//     // Prepare response
-//     $responseData = [
-//         'id' => $data->id,
-//         'username'=> $data->username,
-//         'name'=> $data->name,
-//         'mobile' => $data->mobile,
-//         'email' => $data->email,
-//         'address' => $data->address,
-//         'pincode' => $data->pincode,
-//         'city' => $data->city,
-//         'username' => $data->username,
-//         'userimage' => $data->userimage,
-//         'recharge' => $data->recharge,
-//         'u_id' => $data->u_id,
-//         'login_token' => $data->login_token,
-//         'referral_code' => $data->referral_code,
-//         'wallet' => $main_wallet,
-//         //'third_party_wallet' => $thirdparty_wallet, //freecash amount 
-//         'free_cash' => $thirdparty_wallet, //freecash amount 
-//         'net_exposure' => (float) $netExposure,
-//         'total_wallet' => $total_wallet,
-//         'winning_amount' => $data->winning_wallet,
-//         'minimum_deposit' => $data->minimum_withdraw,
-//         'minimum_withdraw' => $data->minimum_withdraw,
-//         'maximum_deposit' => $data->maximum_withdraw,
-//         'maximum_withdraw' => $data->maximum_withdraw,
-//         'crypto_min_deposit' => 10,
-//         'crypto_mxn_deposit' => 1000,
-//         'crypto_min_withdraw' => 10,
-//         'crypto_max_withdraw' => 500,
-//         'last_login_time' => now()->format('Y-m-d H:i:s'),
-//         'apk_link' => "https://root.winbhai.in/winbhai.apk",
-//         'referral_code_url' => "https://winbhai.in/signup?campaign={$data->referral_code}",
-//         'aviator_link' => "https://foundercodetech.com",
-//         'aviator_event_name' => "gbaviator",
-//         'wingo_socket_url' => "https://aviatorudaan.com/",
-//         'wingo_socket_event_name' => "globalbet",
-//         'status' => "1",
-//         'type' => "0",
-//         'withdraw_conversion_rate' => $paymentLimit,
-//         'available_commission_to_withdraw' => (float)$availableToWithdraw,
-//         // 'available_commission_to_withdraw' => 1000,
-//         'whatsapp_deposit_number' => $whatsappDepositNumber,
-//         'chat_on_whatsapp' => $chat_on_whatsapp,
-//         'cashable_amount' => round((float) $cashable_amount, 2),
-//         'affilation_withdraw_min' => $affilation_withdraw_min,
-//         'affilation_withdraw_max' => $affilation_withdraw_max,
-//         'apk_link' => 'https://root.winbhai.in/public/winbhai.apk'
-
-//     ];
-
-//     return response()->json([
-//         'success' => 200,
-//         'message' => 'Data found',
-//         'data' => $responseData
-//     ]);
-// }
 
     public function Status_list()
     {
@@ -7420,7 +7294,7 @@ AND `created_at` BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 MONTH) AND CURDATE();
 
 	public function getUrlIp()
     {
-        $url = 'https://root.winbhai.in/'; // Aapko full URL ke bajaye sirf domain name use karna hoga
+        $url = 'https://root.nexwin.vip/'; // Aapko full URL ke bajaye sirf domain name use karna hoga
     
         // Get the IPv4 address of the URL using gethostbyname
         $ipv4_address = gethostbyname($url);

@@ -7,14 +7,7 @@ use DB;
 
 class DepositController extends Controller
 {
-    // public function deposit_index($id)
-    // {
-    //     //  $deposits= DB::select("SELECT payins.*,users.username AS uname,users.id As userid, users.mobile As mobile FROM `payins` LEFT JOIN users ON payins.user_id=users.id WHERE payins.status = '$id'");
-    //     $deposits=DB::select("SELECT payins.*, users.username AS uname, users.id AS userid, users.mobile AS mobile FROM payins LEFT JOIN users ON payins.user_id = users.id WHERE payins.status = $id AND users.id IS NOT NULL");
-    //      //dd($deposits);
-    //     return view('work_order_assign.deposit')->with('deposits',$deposits)->with('id',$id);
-        
-    // }
+
     public function deposit_index($id)
 {
     $deposits = DB::select("

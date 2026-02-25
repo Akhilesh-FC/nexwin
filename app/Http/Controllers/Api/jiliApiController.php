@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-
-
 class jiliApiController extends Controller
 {
     public function getSelectedBrands()
@@ -102,301 +100,6 @@ class jiliApiController extends Controller
         ]);
     }
     
-    
-//   public function openGame(Request $request)
-// {
-//     $validator = Validator::make($request->all(), [
-//         'user_id' => 'required',
-//         'amount'  => 'required',
-//         'game_id' => 'required',
-//         'game_name' => 'required'
-//     ]);
-
-//     if ($validator->fails()) {
-//         return response("<h3 style='color:red;'>Error: ".$validator->errors()->first()."</h3>");
-//     }
-
-//     $userid  = $request->user_id;
-//     $game_id = (string)$request->game_id;
-//     $game_name = $request->game_name;
-
-//     $user = DB::table('users')->where('id', $userid)->first();
-//     if (!$user) {
-//         return response("<h3 style='color:red;'>Error: User not found</h3>");
-//     }
-
-//     $mobile_no = trim($user->mobile);
-//     $wallet_balance = (int)$user->wallet;
-
-//     // API Keys
-//     $TOKEN  = "9cf215d00828f1f2ae6663d3e0d3ca5e";
-//     $SECRET = "a1e5c1441441d4ea763b0de4be8dfebe";
-
-//     $SERVER_URL   = "https://igamingapis.live/api/v1";
-//     $RETURN_URL   = "https://winbhai.in";
-//     $CALLBACK_URL = "https://winbhai.in/api.php";
-
-//     // ✔ Correct Payload
-//     $PAYLOAD = [
-//         "user_id"        => (string)$userid,    
-//         "suffix"         => $mobile_no,          
-//         "balance"        => $wallet_balance,
-//         "game_uid"       => $game_id,
-//         "token"          => $TOKEN,
-//         "timestamp"      => round(microtime(true) * 1000),
-//         "return"         => $RETURN_URL,
-//         "callback"       => $CALLBACK_URL,
-//         "currency_code"  => "INR",
-//         "language"       => "en"
-//     ];
-
-//     // ✔ Encryption
-//     $encrypt = function(array $data, string $key): string {
-//         $key = substr($key, 0, 32);
-//         if (strlen($key) < 32) {
-//             $key = str_pad($key, 32, "\0");
-//         }
-//         $json = json_encode($data, JSON_UNESCAPED_UNICODE);
-//         $enc  = openssl_encrypt($json, "AES-256-ECB", $key, OPENSSL_RAW_DATA);
-//         return base64_encode($enc);
-//     };
-
-//     $ENCRYPTED = $encrypt($PAYLOAD, $SECRET);
-
-//     // ✔ POST Request
-//     $body = json_encode(["payload" => $ENCRYPTED, "token" => $TOKEN]);
-
-//     $ch = curl_init($SERVER_URL);
-//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//     curl_setopt($ch, CURLOPT_POST, true);
-//     curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-//     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-//     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-
-//     $response = curl_exec($ch);
-//     curl_close($ch);
-
-//     $apiResponse = json_decode($response, true);
-
-//     $realUrl = $apiResponse["data"]["url"] ?? null;
-
-//     // ❤️ If game URL missing → show pretty error
-//     if (!$realUrl) {
-//         $error = $apiResponse["msg"] ?? "Unable to launch game. Please try again.";
-//         return response("
-//             <h2 style='color:red; text-align:center;'>❌ Game Launch Failed</h2>
-//             <p style='text-align:center;'>Reason: <b>$error</b></p>
-//         ");
-//     }
-
-//     // ❤️ Working iframe + fallback script
-//     $html = "
-//         <html>
-//         <head>
-//             <title>Game Loaded</title>
-//             <style>
-//                 body { margin:0; padding:0; background:#000; }
-//                 #errorBox {
-//                     display:none;
-//                     color:#fff;
-//                     background:#d9534f;
-//                     padding:20px;
-//                     text-align:center;
-//                     font-size:20px;
-//                 }
-//             </style>
-//         </head>
-//         <body>
-
-//             <div id='errorBox'>
-//                 ❌ Unable to load game.  
-//                 <br>Authentication error or session expired.
-//                 <br>Please try again.
-//             </div>
-
-//             <iframe id='gameFrame'
-//                 src='$realUrl'
-//                 style='width:100%; height:100vh; border:none; display:block;'
-//                 allowfullscreen>
-//             </iframe>
-
-//             <script>
-//                 var frame = document.getElementById('gameFrame');
-
-//                 // If iframe fails to load within 5 seconds → show error
-//                 setTimeout(function() {
-//                     if (!frame.contentWindow || frame.contentWindow.length === 0) {
-//                         frame.style.display = 'none';
-//                         document.getElementById('errorBox').style.display = 'block';
-//                     }
-//                 }, 5000);
-//             </script>
-
-//         </body>
-//         </html>
-//     ";
-
-//     return response($html);
-// }
-
-
-    
-    // ------------akhilesh sir------------------ working
-//   public function openGame(Request $request)
-// {
-//     // 🔹 Validate request
-//     $validator = Validator::make($request->all(), [
-//         'user_id' => 'required',
-//         'amount'  => 'required',
-//         'game_id' => 'required',
-//         'game_name' => 'required'
-//     ]);
-
-//     if ($validator->fails()) {
-//         return response()->json(['status' => 400, 'message' => $validator->errors()->first()], 200);
-//     }
-
-//     $userid  = $request->user_id;
-//     $amount  = $request->amount;
-//     $game_id = (string)$request->game_id;  // IMPORTANT: provider requires string
-//     $game_name = $request->game_name;
-
-//     // 🔹 Fetch user
-//     $user = DB::table('users')->where('id', $userid)->first();
-//     if (!$user) {
-//         return response()->json(['status' => 404, 'message' => 'User not found']);
-//     }
-
-//     $mobile_no = trim($user->mobile);
-//     $wallet_balance = (int)$user->wallet;
-
-//     // 🔹 API Credentials
-//     $TOKEN  = "9cf215d00828f1f2ae6663d3e0d3ca5e";
-//     $SECRET = "a1e5c1441441d4ea763b0de4be8dfebe";
-
-//     $SERVER_URL   = "https://igamingapis.live/api/v1";
-//     $RETURN_URL   = "https://winbhai.in";
-//     $CALLBACK_URL = "https://winbhai.in/api.php";
-//     $CURRENCY     = "INR";
-
-//   $PAYLOAD = [
-//     "user_id"        => (string)$userid,     // FIXED
-//     "suffix"         => $mobile_no,          // mobile goes here if needed
-//     "balance"        => $wallet_balance,
-//     "game_uid"       => $game_id,
-//     "token"          => $TOKEN,
-//     "timestamp"      => round(microtime(true) * 1000),
-//     "return"         => $RETURN_URL,
-//     "callback"       => $CALLBACK_URL,
-//     "currency_code"  => "INR",
-//     "language"       => "en"
-// ];
-
-
-//     // 🔹 AES Encryption
-//     $encrypt = function(array $data, string $key): string {
-//         $key = substr($key, 0, 32);
-//         if (strlen($key) < 32) {
-//             $key = str_pad($key, 32, "\0");
-//         }
-//         $json = json_encode($data, JSON_UNESCAPED_UNICODE);
-//         $encrypted = openssl_encrypt($json, "AES-256-ECB", $key, OPENSSL_RAW_DATA);
-//         return base64_encode($encrypted);
-//     };
-
-//     $ENCRYPTED = $encrypt($PAYLOAD, $SECRET);
-
-//     // 🔹 POST Request (THIS FIXES EV.5)
-//     $body = json_encode([
-//         "payload" => $ENCRYPTED,
-//         "token"   => $TOKEN
-//     ]);
-
-//     $ch = curl_init($SERVER_URL);
-//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//     curl_setopt($ch, CURLOPT_POST, true);
-//     curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-//     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-//     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-
-//     $response = curl_exec($ch);
-//     curl_close($ch);
-
-//     $apiResponse = json_decode($response, true);
-
-//     // 🔹 Extract Game URL
-//      $realUrl = $apiResponse["data"]["url"] ?? null;
-     
-//      $newOn=base64_encode($realUrl);
-
-//     if (!$realUrl) {
-//         return response()->json([
-//             "status" => 400,
-//             "message" => $apiResponse["msg"] ?? "Failed to launch game",
-//             "apiResponse" => $apiResponse
-//         ]);
-//     }
-
-//     // 🔹 Create secure redirect token
-//     $token = Str::uuid()->toString();
-//     Cache::put("GAME_URL_" . $token, $realUrl, 60);
-
-//     // 🔹 Store active session for callback
-//     DB::table('active_game_sessions')->insert([
-//         "game_uid"    => $game_id,
-//         "game_id"     => $game_id,
-//         "game_name"   => $game_name,
-//         "user_mobile" => $mobile_no,
-//         "created_at"  => now()
-//     ]);
-
-//     // 🔹 Final response (Same structure your frontend uses)
-//     return response()->json([
-//         'status'     => 200,
-//         'message'    => 'Game Launched',
-//         'gameid'     => $game_id,
-//         'game_name'  => $game_name,
-//         'userPhone'  => $mobile_no,
-//         'gameUrl'    => url("/play/$token"),
-//         'apiResponse'=> $apiResponse,
-//         'newUrl'=> $newOn
-//     ]);
-// }
-
-
-
-    // ============================================
-    // STEP 1 — OPEN GAME (Frontend calls this API)
-    // ============================================
-
-    // public function openGame(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'user_id' => 'required',
-    //         'game_id' => 'required',
-    //         'game_name' => 'required'
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json(['status' => 400, 'message' => $validator->errors()->first()]);
-    //     }
-
-    //     $token = Str::uuid()->toString();
-
-    //     Cache::put("PENDING_GAME_" . $token, [
-    //         "user_id"   => $request->user_id,
-    //         "game_id"   => $request->game_id,
-    //         "game_name" => $request->game_name
-    //     ], 120);
-
-    //     return response()->json([
-    //         "status" => 200,
-    //         "launchUrl" => url("/play/" . $token)
-    //     ]);
-    // }
-    
     public function openGame(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -442,35 +145,8 @@ class jiliApiController extends Controller
         ]);
     }
 
-
-
-
-    // ====================================================
-    // STEP 2 — PLAY GAME (Browser/iframe opens this URL)
-    // ====================================================
-
-    // public function launchGame($token)
-    // {
-    //     $data = Cache::get("PENDING_GAME_" . $token);
-
-    //     if (!$data) {
-    //         return "Session expired! Please relaunch the game.";
-    //     }
-
-    //     $providerUrl = $this->getFreshGameUrl($data['user_id'], $data['game_id']);
-
-    //     if (!$providerUrl) {
-    //         Log::error("Fresh game URL FAILED for token: " . $token);
-    //         return "Unable to launch game at the moment.";
-    //     }
-
-    //     return redirect()->away($providerUrl);
-    // }
-
-
-////////////working/
-   public function launchGame($token)
-{
+    public function launchGame($token)
+    {
     Log::info("========== GAME LAUNCH START ==========");
     Log::info("TOKEN RECEIVED", ['token' => $token]);
 
@@ -502,72 +178,6 @@ class jiliApiController extends Controller
     return redirect()->away($providerUrl);
 }
 
-
-
-
-    // ====================================================
-    // STEP 3 — GENERATE FRESH PROVIDER GAME URL
-    // ====================================================
-
-
-// wokring
-    // private function getFreshGameUrl($user_id, $game_uid)
-    // {
-    //     $user = DB::table('users')->where('id', $user_id)->first();
-
-    //     if (!$user) return null;
-
-    //     $TOKEN  = "9cf215d00828f1f2ae6663d3e0d3ca5e";
-    //     $SECRET = "a1e5c1441441d4ea763b0de4be8dfebe";
-
-    //     $payload = [
-    //         "user_id" => (string)$user->mobile,
-    //         "suffix"         => $user->mobile,
-    //         "balance"        => (int)$user->wallet,
-    //         "game_uid"       => (string)$game_uid,
-    //         "token"          => $TOKEN,
-    //         "timestamp"      => round(microtime(true) * 1000),
-    //         "return"         => "https://winbhai.in",
-    //       // "callback"       => "https://winbhai.in/api/game-callback",
-    //         "callback"       => "https://winbhai.in/api.php",
-
-    //         "currency_code"  => "INR",
-    //         "language"       => "en"
-    //     ];
-
-    //     $key = substr($SECRET, 0, 32);
-
-    //     $encrypted = base64_encode(openssl_encrypt(
-    //         json_encode($payload),
-    //         "AES-256-ECB",
-    //         $key,
-    //         OPENSSL_RAW_DATA
-    //     ));
-
-    //     $body = json_encode([
-    //         "payload" => $encrypted,
-    //         "token"   => $TOKEN
-    //     ]);
-
-    //     $ch = curl_init("https://igamingapis.live/api/v1");
-    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    //     curl_setopt($ch, CURLOPT_POST, true);
-    //     curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-    //     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-    //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-    //     $response = curl_exec($ch);
-    //     curl_close($ch);
-
-    //     Log::info("Provider freshCall response: " . $response);
-
-    //     $api = json_decode($response, true);
-
-    //     return $api["data"]["url"] ?? null;
-    // }
-    
-    
-    
     private function getFreshGameUrl($user_id, $game_uid)
     {
     Log::info("------ GET FRESH GAME URL START ------");
@@ -587,8 +197,8 @@ class jiliApiController extends Controller
     Log::info("USER FOUND ✅", (array) $user);
 
     // 2️⃣ KEYS
-    $TOKEN  = "9cf215d00828f1f2ae6663d3e0d3ca5e";
-    $SECRET = "a1e5c1441441d4ea763b0de4be8dfebe";
+    $TOKEN  = "38b3f891c283882c1999ab87eedbd242";
+    $SECRET = "d6982fb0bbfa259eddc4f0edb41614f9";
     $key    = substr($SECRET, 0, 32);
 
     Log::info("KEY LENGTH", ['length' => strlen($key)]);
@@ -601,8 +211,8 @@ class jiliApiController extends Controller
         "game_uid"       => (string) $game_uid,
         "token"          => $TOKEN,
         "timestamp"      => round(microtime(true) * 1000),
-        "return"         => "https://winbhai.in",
-        "callback"       => "https://winbhai.in/api.php",
+        "return"         => "https://nexwin.vip/",
+        "callback"       => "https://nexwin.vip//api.php",
         "currency_code"  => "INR",
         "language"       => "en"
     ];
@@ -678,61 +288,6 @@ class jiliApiController extends Controller
     return $api['data']['url'];
 }
 
-    
-//     private function getFreshGameUrl($user_id, $game_uid)
-// {
-//     $user = DB::table('users')->where('id', $user_id)->first();
-//     if (!$user) return null;
-
-//   $TOKEN  = "9cf215d00828f1f2ae6663d3e0d3ca5e";
-//     $SECRET = "a1e5c1441441d4ea763b0de4be8dfebe";
-
-//     $payload = [
-//         "user_id"   => (string)$user->mobile,
-//         "suffix"    => $user->mobile,
-//         "balance"   => (int)$user->wallet,
-//         "game_uid"  => $game_uid,   // 🔥 SAME UID
-//         "token"     => $TOKEN,
-//         "timestamp" => round(microtime(true) * 1000),
-//         "callback"  => "https://winbhai.in/api.php",
-//         "currency_code" => "INR",
-//         "language" => "en"
-//     ];
-
-//     $key = substr($SECRET, 0, 32);
-
-//     $encrypted = base64_encode(openssl_encrypt(
-//         json_encode($payload),
-//         "AES-256-ECB",
-//         $key,
-//         OPENSSL_RAW_DATA
-//     ));
-
-//     $body = json_encode([
-//         "payload" => $encrypted,
-//         "token"   => $TOKEN
-//     ]);
-
-//     $ch = curl_init("https://igamingapis.live/api/v1");
-//     curl_setopt_array($ch, [
-//         CURLOPT_RETURNTRANSFER => true,
-//         CURLOPT_POST           => true,
-//         CURLOPT_POSTFIELDS     => $body,
-//         CURLOPT_HTTPHEADER     => ["Content-Type: application/json"],
-//         CURLOPT_SSL_VERIFYPEER => false
-//     ]);
-
-//     $response = curl_exec($ch);
-//     curl_close($ch);
-
-//     $api = json_decode($response, true);
-//     return $api['data']['url'] ?? null;
-// }
-
-
-
-
-
     // ====================================================
     // STEP 4 — CALLBACK HANDLER (Provider sends debit/credit)
     // ====================================================
@@ -776,7 +331,6 @@ class jiliApiController extends Controller
         return response()->json(['status' => 200, 'message' => 'Wallet updated']);
     }
 
-
     public function userGameHistory($user_id)
     {
         $history = DB::table('game_history')
@@ -789,7 +343,6 @@ class jiliApiController extends Controller
             'data' => $history
         ]);
     }
-    
     
     public function filterGameHistory(Request $request)
     {
@@ -810,10 +363,5 @@ class jiliApiController extends Controller
             'data' => $history
         ]);
     }
-
-
-
-
-
 
 }

@@ -35,7 +35,7 @@ class UsdtController extends Controller
 
                 // Update the database record
                DB::table('usdt_qr')->where('id', $id)->update([
-                        'qr_code' => 'https://root.globalbet24.club/' . $path,
+                        'qr_code' => 'https://root.nexwin.vip/' . $path,
                         'wallet_address' => $wallet_address
                     ]);
 

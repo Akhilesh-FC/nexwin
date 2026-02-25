@@ -11,7 +11,7 @@ class UsdtDepositController extends Controller
     {
 
          $deposits= DB::select("SELECT payins.*,users.username AS uname,users.id As userid, users.mobile As mobile FROM `payins` LEFT JOIN 
-users ON payins.user_id=users.id WHERE payins.status = '$id' && payins.type=0");
+users ON payins.user_id=users.id WHERE payins.status = '$id' && payins.type=1");
 
         return view('usdt_deposit.deposit')->with('deposits',$deposits)->with('id',$id);
     }

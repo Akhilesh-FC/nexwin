@@ -9,23 +9,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-// use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Validator; 
 class CreateRoleController extends Controller{
-    
-//   public function createrole(){
-//       $loggedInUser = Auth::user();
-//       $Auth_role = $loggedInUser->role_id;
-//       $Auth_id = $loggedInUser->id;
-//       //dd($role_id);
-//       $permissions = DB::table('permissions')
-//         ->select('id', 'name')
-//         ->whereNotIn('id', [13])   // id 13 ko exclude kar diya
-//         ->get();
-//       $roles = DB::table('roles')->select('id','name')->whereIn('id', [4,5])->get();
-//      // dd($roles);
-//       return view('role.createrole',compact('permissions','roles','Auth_role','Auth_id'));
-//   }
+
 public function createrole()
 {
     $loggedInUser = Auth::user(); // login user ho to milega, warna null 

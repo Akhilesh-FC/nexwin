@@ -112,42 +112,6 @@ public function auth_login(Request $request)
          return redirect()->route('dashboard');
      }
     
-//     public function auth_login(Request $request) 
-//     {
-//     $request->validate([
-//         'email' => 'required',
-//         'password' => 'required',
-//     ]);
-
-//     $login = DB::table('users')
-//         ->where('email', $request['email'])
-//         ->where('password', $request['password'])
-//         ->where('verification', '2')
-//         ->first();
-
-//     if ($login == NULL) {
-//         session()->flash('msg_class', 'danger');
-//         session()->flash('msg', 'The provided credentials do not match our records.');
-//         return redirect()->route('login');
-//     } else {
-
-//         // Store session
-//         $request->session()->put('id', $login->id);
-//         $request->session()->put('permissions', json_decode($login->permissions, true));
-
-//         // ===============================
-//         // ✔ If role_id = 4 then run agentUserDetails()
-//         // ===============================
-//         if ($login->role_id == 4) {
-
-//             // Call function (same controller)
-//             return $this->agentUserDetails($login->id);
-//         }
-
-//         // Other roles
-//         return redirect()->route('dashboard');
-//     }
-// }
 
     private function agentUserDetails($agent_id)
     {
@@ -350,49 +314,5 @@ FROM users;");
     return redirect()->route('login');
 }
 
-	
-//     public function password_change(Request $request)
-//     {
-//     $validator = Validator::make($request->all(), [
-//         'email' => 'required|email',
-//         'password' => 'required',
-//         'npassword' => 'required|min:6',
-//     ]);
-
-//     if ($validator->fails()) {
-//         return redirect()->route('change_password')
-//             ->withErrors($validator)
-//             ->withInput();
-//     }
-
-//     $user = DB::table('users')->where('email', $request->input('email'))->first();
-
-//     if ($user) {
-//         if ($request->input('password') === $user->password) {
-//             DB::table('users')
-//                 ->where('email', $request->input('email'))
-//                 ->update(['password' => $request->input('npassword')]);
-
-//             // Session clear and logout
-//             $request->session()->forget('id'); // remove user session
-//             $request->session()->flush(); // optional: clear all session data
-
-//             // Flash logout message
-//             session()->flash('msg_class', 'success');
-//             session()->flash('msg', 'Password changed successfully. Please login again.');
-
-//             // Redirect to login
-//             return redirect()->route('login');
-//         } else {
-//             session()->flash('msg_class', 'danger');
-//             session()->flash('msg', 'Current password is incorrect.');
-//         }
-//     } else {
-//         session()->flash('msg_class', 'danger');
-//         session()->flash('msg', 'The provided email does not match our records.');
-//     }
-
-//     return redirect()->route('change_password')->withInput();
-// }
 
 }

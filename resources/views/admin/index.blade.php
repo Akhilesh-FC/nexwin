@@ -44,7 +44,7 @@
          </div>
          <div class="col-md-2 form-group mt-4">
             <button type="submit" class="btn btn-success">Search</button>
-            <a href="https://root.winzy.app/dashboard" class=" btn btn-secondary">Reset</a>
+            <a href="https://root.nexwin.vip/dashboard" class=" btn btn-secondary">Reset</a>
          </div>
          </form>
       </div>

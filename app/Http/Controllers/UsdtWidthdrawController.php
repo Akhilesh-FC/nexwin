@@ -22,7 +22,7 @@ public function usdt_widthdrawl_index($id)
         JOIN 
             users ON withdraw_histories.user_id = users.id 
         WHERE 
-            withdraw_histories.type = 0 
+            withdraw_histories.type = 1
             AND withdraw_histories.status = ?
     ", [$id]);
 

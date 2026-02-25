@@ -6,7 +6,7 @@
 	
 }else{
 	
-	header("Location: https://root.winbhai.in/");
+	header("Location: https://root.nexwin.vip/");
             die; 
 
 } 
@@ -31,7 +31,7 @@
                    </ul> --}}
                    <ul class="user_profile_dd">
                       <li>
-                         <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="https://25game.codingjourney.in/public/images/layout_img/user_img.jpg" alt="#" /><span class="name_user">Admin</span></a>
+                         <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="https:https://root.nexwin.vip/public/images/layout_img/user_img.jpg" alt="#" /><span class="name_user">Admin</span></a>
                          <div class="dropdown-menu">
                             <!--<a class="dropdown-item" href="#">My Profile</a>-->
                             {{-- <a class="dropdown-item" href="settings.html">Settings</a>

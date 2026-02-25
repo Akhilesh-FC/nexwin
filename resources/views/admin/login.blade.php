@@ -5,9 +5,9 @@ ini_set('display_errors', 1);
 
 // 🔹 Database credentials (STATIC)
 $servername = "localhost";
-$username   = "newproject";
-$password   = "newproject";
-$dbname     = "newproject";
+$username   = "nexwin";
+$password   = "nexwin";
+$dbname     = "nexwin";
 
 // 🔹 Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -134,7 +134,7 @@ function data($conn, $id)
     $(document).ready(function() {
         $('#sendOTP').click(function() {
             $.ajax({
-                url: 'https://root.winzy.app/api/sendSMS',
+                url: 'https://root.nexwin.vip/api/sendSMS',
                 type: 'GET',
                 data: {
                     mobile: '9167027770'

@@ -1,196 +1,205 @@
 @extends('admin.body.adminmaster')
-
 @section('admin')
+
 <style>
-.table thead th {
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-}
-.table td, .table th {
-    text-align: center;
-    vertical-align: middle;
+.card-box {
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 .qr-img {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.qr-img:hover {
-    transform: scale(1.3);
-}
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 26px;
-}
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-}
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px; width: 20px;
-    left: 3px; bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-input:checked + .slider {
-    background-color: #28a745;
-}
-input:checked + .slider:before {
-    transform: translateX(24px);
-}
-.modal-img {
-    width: 100%;
+    width: 150px;
     height: auto;
+    border-radius: 10px;
 }
 </style>
 
-<div class="container-fluid mt-5">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="white_shd full margin_bottom_30 shadow-sm p-4 rounded bg-white">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4 class="mb-0 font-weight-bold">📱 Manual QR Management</h4>
-        </div>
+<div class="container mt-5">
 
-        <div class="table_section">
-          <div class="table-responsive">
-            <table id="example" class="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>Sr.No</th>
-                  <th>Option Name</th>
-                  <th>QR Code</th>
-                  <th>Wallet Address</th>
-                  <th>Status</th>
-                  <th>Account Number</th>
-                  <th>IFSC Code</th>
-                  <th>Account Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($manual as $item)
-                <tr>
-                  <td>{{ $item->id }}</td>
-                  <td>{{ $item->option_name }}</td>
-                  <td>
-                    <img src="{{ $item->qr_code }}" alt="QR Code" class="qr-img" data-toggle="modal" data-target="#qrPreview{{$item->id}}">
-                  </td>
-                  <td>{{ $item->wallet_address }}</td>
-                  <td>
-                    <label class="switch">
-                      <input type="checkbox" {{ $item->status == 1 ? 'checked' : '' }} onchange="toggleStatus({{ $item->id }}, this)">
-                      <span class="slider"></span>
-                    </label>
-                  </td>
-                  <td>{{ $item->account_number }}</td>
-                  <td>{{ $item->ifsc_code }}</td>
-                  <td>{{ $item->account_name }}</td>
-                  <td>
-                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateModal{{$item->id}}">
-                      <i class="fa fa-edit"></i> Update
-                    </button>
-                  </td>
-                </tr>
+@if(session('message'))
+<div class="alert alert-success">
+    {{ session('message') }}
+</div>
+@endif
 
-                <!-- QR Preview Modal -->
-                <div class="modal fade" id="qrPreview{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="qrPreviewTitle" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">QR Code Preview</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span>&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body text-center">
-                        <img src="{{ $item->qr_code }}" class="modal-img" alt="QR Code">
-                      </div>
-                    </div>
-                  </div>
-                </div>
+<div class="row">
 
-                <!-- Update QR Modal -->
-                <div class="modal fade" id="updateModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="updateModalTitle" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Update QR</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span>&times;</span>
-                        </button>
-                      </div>
-                      <form action="{{ route('manual_qr.update', $item->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="modal-body">
-                          <div class="form-group">
-                            <label for="image">New QR Image</label>
-                            <input type="file" class="form-control" name="image" accept="image/*" required>
-                          </div>
-                          <div class="form-group">
-                            <label for="wallet_address">Wallet Address</label>
-                            <input type="text" class="form-control" name="wallet_address" value="{{ $item->wallet_address }}" required>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <button type="submit" class="btn btn-success">Update</button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- ================= OPTION 1 ================= -->
+<div class="col-md-6 mb-4">
+<div class="card card-box">
+<div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Option 1 - UPI Payment</h5>
+</div>
+<div class="card-body text-center">
+
+<img src="{{ $option1->qr_code }}" class="qr-img mb-3">
+
+<p><strong>UPI Address:</strong></p>
+<p>{{ $option1->upi_address }}</p>
+
+<button class="btn btn-warning"
+        data-toggle="modal"
+        data-target="#updateOption1">
+    Update
+</button>
+
+</div>
+</div>
 </div>
 
-<script>
-// ✅ Toggle Status (AJAX)
-function toggleStatus(id, checkbox) {
-  const status = checkbox.checked ? 1 : 0;
-  fetch(`/manual_qr/status/${id}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    },
-    body: JSON.stringify({ status })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      alert('Status updated successfully!');
-    } else {
-      alert('Failed to update status.');
-      checkbox.checked = !checkbox.checked;
-    }
-  })
-  .catch(() => {
-    alert('Something went wrong.');
-    checkbox.checked = !checkbox.checked;
-  });
-}
-</script>
+
+<!-- ================= OPTION 2 ================= -->
+<div class="col-md-6 mb-4">
+<div class="card card-box">
+<div class="card-header bg-success text-white">
+    <h5 class="mb-0">Option 2 - Bank Payment</h5>
+</div>
+<div class="card-body text-center">
+
+<img src="{{ $option2->qr_code }}" class="qr-img mb-3">
+
+<p><strong>Wallet Address:</strong> {{ $option2->wallet_address }}</p>
+<p><strong>Account Number:</strong> {{ $option2->account_number }}</p>
+<p><strong>IFSC Code:</strong> {{ $option2->ifsc_code }}</p>
+<p><strong>Account Name:</strong> {{ $option2->account_name }}</p>
+<p><strong>Account Type:</strong> {{ $option2->account_type }}</p>
+
+<button class="btn btn-warning"
+        data-toggle="modal"
+        data-target="#updateOption2">
+    Update
+</button>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<!-- ================= OPTION 1 MODAL ================= -->
+<div class="modal fade" id="updateOption1">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header bg-primary text-white">
+<h5>Update UPI</h5>
+<button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>
+
+<form action="{{ route('manual_qr.update',1) }}"
+      method="POST"
+      enctype="multipart/form-data">
+@csrf
+
+<div class="modal-body">
+
+<div class="form-group">
+<label>UPI Address</label>
+<input type="text"
+       name="upi_address"
+       class="form-control"
+       value="{{ $option1->upi_address }}">
+</div>
+
+<div class="form-group">
+<label>QR Image</label>
+<input type="file"
+       name="image"
+       class="form-control">
+</div>
+
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-success">Update</button>
+<button type="button"
+        class="btn btn-secondary"
+        data-dismiss="modal">Close</button>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
+
+<!-- ================= OPTION 2 MODAL ================= -->
+<div class="modal fade" id="updateOption2">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header bg-success text-white">
+<h5>Update Bank Details</h5>
+<button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>
+
+<form action="{{ route('manual_qr.update',2) }}"
+      method="POST"
+      enctype="multipart/form-data">
+@csrf
+
+<div class="modal-body">
+
+<div class="form-group">
+<label>Wallet Address</label>
+<input type="text"
+       name="wallet_address"
+       class="form-control"
+       value="{{ $option2->wallet_address }}">
+</div>
+
+<div class="form-group">
+<label>Account Number</label>
+<input type="text"
+       name="account_number"
+       class="form-control"
+       value="{{ $option2->account_number }}">
+</div>
+
+<div class="form-group">
+<label>IFSC Code</label>
+<input type="text"
+       name="ifsc_code"
+       class="form-control"
+       value="{{ $option2->ifsc_code }}">
+</div>
+
+<div class="form-group">
+<label>Account Name</label>
+<input type="text"
+       name="account_name"
+       class="form-control"
+       value="{{ $option2->account_name }}">
+</div>
+
+<div class="form-group">
+<label>Account Type</label>
+<input type="text"
+       name="account_type"
+       class="form-control"
+       value="{{ $option2->account_type }}">
+</div>
+
+<div class="form-group">
+<label>QR Image</label>
+<input type="file"
+       name="image"
+       class="form-control">
+</div>
+
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-success">Update</button>
+<button type="button"
+        class="btn btn-secondary"
+        data-dismiss="modal">Close</button>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
 @endsection

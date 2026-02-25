@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username = "newproject";
-$password = "newproject";
-$dbname = "newproject";
+$username = "nexwin";
+$password = "nexwin";
+$dbname = "nexwin";
 
 // Create connection  
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -1,3 +1,9 @@
+@php
+$unreadCount = DB::table('admin_notifications')
+    ->where('status', 0)
+    ->count();
+@endphp
+
 <div class="full_container">
          <div class="inner_container">
             <!-- Sidebar  -->
@@ -11,7 +17,7 @@
                   <div class="sidebar_user_info">
                      <div class="icon_setting"></div>
                      <div class="user_profle_side">
-                        <div class="user_img"><img class="img-responsive" src="https://root.winbhai.in/public/images/layout_img/user_img.jpg" 								alt="#" /></div>
+                        <div class="user_img"><img class="img-responsive" src="https://root.nexwin.vip/public/images/layout_img/user_img.jpg" 								alt="#" /></div>
                         <div class="user_info">
                            <h6>Admin</h6>
                            <p><span class="online_animation"></span> Online</p>
@@ -78,6 +84,7 @@
 	    '55' => 'ip_address',
 	    '56' => 'ip_logs_today',
 	    '57' => 'otp_history',
+	    '58' => 'notification_admin',
 	    
 	    
     ];
@@ -103,6 +110,27 @@
 					   @if(in_array('attendance', $allowed)) 
                      <li><a href="{{route('attendance.index')}}"><i class="fa fa-clock-o purple_color2"></i> <span>Attendance</span></a></li>
 					  @endif
+					  
+					  
+					  
+					   @if(in_array('notification_admin', $allowed))
+
+
+					  <li>
+    <a href="{{ route('admin.notifications') }}">
+        <i class="fa fa-bell yellow_color"></i>
+        <span>Manual Deposit Alerts</span>
+
+        @if($unreadCount > 0)
+            <span class="badge badge-danger float-right">
+                {{ $unreadCount }}
+            </span>
+        @endif
+    </a>
+</li>
+@endif
+					
+					  
 					  
 					  
 					   <!--@if(in_array('agents', $allowed))-->
@@ -299,15 +327,15 @@
        <!--               @endif-->
                       
                       
-                <!--         @if(in_array('usdt_qr_code', $allowed))-->
-                <!--<li><a href="{{route('usdtqr')}}"><i class="fa fa-table purple_color2"></i> -->
-                <!--<span>USDT QR Code</span></a></li>-->
-                <!--@endif-->
+                         @if(in_array('usdt_qr_code', $allowed))
+                <li><a href="{{route('usdtqr')}}"><i class="fa fa-table purple_color2"></i> 
+                <span>USDT QR Code</span></a></li>
+                @endif
                 
-                <!-- @if(in_array('usdt_conversion', $allowed))-->
-                <!--<li><a href="{{route('usdt_conversion.index')}}"><i class="fa fa-table purple_color2"></i> -->
-                <!--<span>USDT Conversion Rate</span></a></li>-->
-                <!--@endif-->
+                 @if(in_array('usdt_conversion', $allowed))
+                <li><a href="{{route('usdt_conversion.index')}}"><i class="fa fa-table purple_color2"></i> 
+                <span>USDT Conversion Rate</span></a></li>
+                @endif
                 
                 
                  @if(in_array('paymode_show', $allowed))
@@ -316,30 +344,30 @@
                 @endif
                 
                 
-                <!-- @if(in_array('usdt_deposit', $allowed))-->
-                <!--                                          <li>-->
-                <!--     <a href="#app20" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">-->
-                <!--<i class="fa fa-tasks  green_color"></i><span>Crypto Deposit</span></a>-->
-                <!--     <ul class="collapse list-unstyled" id="app20">-->
-                <!--   <li><a href="{{ route('usdt_deposit', 1) }}">Pending</a></li>-->
-                <!--<li><a href="{{ route('usdt_deposit', 2) }}">Success</a></li>-->
-                <!--<li><a href="{{ route('usdt_deposit',3) }}">Reject</a></li>-->
+                 @if(in_array('usdt_deposit', $allowed))
+                                                          <li>
+                     <a href="#app20" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                <i class="fa fa-tasks  green_color"></i><span>Crypto Deposit</span></a>
+                     <ul class="collapse list-unstyled" id="app20">
+                   <li><a href="{{ route('usdt_deposit', 1) }}">Pending</a></li>
+                <li><a href="{{ route('usdt_deposit', 2) }}">Success</a></li>
+                <li><a href="{{ route('usdt_deposit',3) }}">Reject</a></li>
                 
                 
-                <!--     </ul>-->
-                <!--  </li>-->
-                <!--  @endif-->
-                <!--                    @if(in_array('usdt_widthdrawl', $allowed))-->
-                <!--                           <li>-->
-                <!--             <a href="#app21" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">-->
-                <!--        <i class="fa fa-wrench purple_color2"></i>            <span>Crypto Withdrawal</span></a>-->
-                <!--             <ul class="collapse list-unstyled" id="app21">-->
-                <!--           <li><a href="{{ route('usdt_widthdrawl', 1) }}">Pending</a></li>-->
-                <!--        <li><a href="{{ route('usdt_widthdrawl', 2) }}">Success</a></li>-->
-                <!--        <li><a href="{{ route('usdt_widthdrawl',3) }}">Reject</a></li>-->
+                     </ul>
+                  </li>
+                  @endif
+                                    @if(in_array('usdt_widthdrawl', $allowed))
+                                           <li>
+                             <a href="#app21" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fa fa-wrench purple_color2"></i>            <span>Crypto Withdrawal</span></a>
+                             <ul class="collapse list-unstyled" id="app21">
+                           <li><a href="{{ route('usdt_widthdrawl', 1) }}">Pending</a></li>
+                        <li><a href="{{ route('usdt_widthdrawl', 2) }}">Success</a></li>
+                        <li><a href="{{ route('usdt_widthdrawl',3) }}">Reject</a></li>
                         
-                <!--             </ul>-->
-                <!--          </li>@endif-->
+                             </ul>
+                          </li>@endif
                           
                             @if(in_array('usdt_qr_code', $allowed))
                 <li><a href="{{route('manual_qr')}}"><i class="fa fa-table purple_color2"></i> 

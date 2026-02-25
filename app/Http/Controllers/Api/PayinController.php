@@ -105,7 +105,7 @@ class PayinController extends Controller
         }
     
         // ✅ full URL
-        $baseUrl = 'https://newprojectadmin.codescarts.com/public/';
+        $baseUrl = 'https://root.nexwin.vip/public/';
         $fullUrl = $baseUrl . 'uploads/payinqr/' . $fileName;
     
         /* ===================================================
@@ -162,6 +162,35 @@ class PayinController extends Controller
             'created_at'     => $datetime,
             'updated_at'     => $datetime
         ]);
+        
+        // For admin notiifcation
+        
+        	$payin_id = DB::getPdo()->lastInsertId();
+
+    /* ===============================
+       ✅ GET USER NAME
+    =============================== */
+    $user = DB::table('users')->where('id', $userid)->first();
+    $username = $user ? $user->username : 'User';
+
+    /* ===============================
+       ✅ ADMIN NOTIFICATION INSERT
+    =============================== */
+    DB::table('admin_notifications')->insert([
+		'related_id' => $payin_id,
+        'type'       => 'manual_deposit',
+        'title'      => 'New Manual Deposit Request',
+        'message'    => "User {$username} has submitted a manual deposit of ₹{$inr}. UTR: {$transaction_id}",
+        'status'     => 0,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+        
+        
+        
+        // end admin notification 
+        
+        
     
         return response()->json([
             'status' => 200,
@@ -280,7 +309,7 @@ class PayinController extends Controller
             'order_id'     => $orderid,
             'redirect_url' => $redirect_url,
             'status'       => 1,
-            'typeimage'    => "https://root.winbhai.in/uploads/fastpay_image.png",
+            'typeimage'    => "https://root.nexwin.vip/uploads/fastpay_image.png",
             'created_at'   => $datetime,
             'updated_at'   => $datetime
         ]);
@@ -304,7 +333,7 @@ class PayinController extends Controller
             'mobile'       => $user->mobile,
             'remark'       => 'payIn',
             'type'         => $cash,
-            'redirect_url' => "https://root.winbhai.in/api/checkPayment?order_id=$orderid"
+            'redirect_url' => "https://root.nexwin.vip/api/checkPayment?order_id=$orderid"
         ];
 
         $curl = curl_init();
@@ -329,10 +358,7 @@ class PayinController extends Controller
     }
 }
 
-
-
-
-public function checkPayment(Request $request)
+    public function checkPayment(Request $request)
     {
     $orderid = $request->input('order_id');
 	
@@ -414,7 +440,7 @@ public function checkPayment(Request $request)
                     WHERE id = $referuserid");
                 }
 
-                return redirect()->away('https://root.winbhai.in/uploads/payment_success.php');
+                return redirect()->away('https://root.nexwin.vip/uploads/payment_success.php');
             } 
             else {
                 return response()->json(['status' => 400, 'message' => 'Failed to update payment status!']);
@@ -431,273 +457,11 @@ public function checkPayment(Request $request)
                 ->where('user_id', $uids)
                 ->update(['status' => 3]);
 
-        return redirect()->away('https://root.winbhai.in/uploads/failed.php');
+        return redirect()->away('https://root.nexwin.vip/uploads/failed.php');
 		
     }
 }
 
-
-
-//     public function checkPayment(Request $request)
-//     {
-//     $orderid = $request->input('order_id');
-	
-//     if ($orderid == "") {
-//         return response()->json(['status' => 400, 'message' => 'Order Id is required']);
-//     }
-
-//     $curl = curl_init();
-//     curl_setopt_array($curl, array(
-//         CURLOPT_URL => "https://bappaventures.com/api/payinstatus?order_id=$orderid",
-//         CURLOPT_RETURNTRANSFER => true,
-//         CURLOPT_FOLLOWLOCATION => true,
-//         CURLOPT_CUSTOMREQUEST => 'GET',
-//         CURLOPT_HTTPHEADER => array(
-//             'Cookie: ci_session=uvkdvmvc3n03msqrd4bfiudbgk658uif'
-//         ),
-//     ));
-
-//     $response = curl_exec($curl);
-//     curl_close($curl);
-
-//     $decodedValue = json_decode($response, true);
-//     $match_orders = DB::table('payins')->where('order_id', $orderid)->where('status', 1)->first();
-// 		 $uids = $match_orders->user_id;
-//     if (isset($decodedValue['status']) && $decodedValue['status'] == "success") {
-
-//         $match_order = DB::table('payins')->where('order_id', $orderid)->where('status', 1)->first();
-//         if ($match_order) {
-
-//             $uid = $match_order->user_id;
-//             $cash = $match_order->cash;
-//             $orderid = $match_order->order_id;
-//             $datetime = now();
-
-//             $update_payin = DB::table('payins')
-//                 ->where('order_id', $orderid)
-//                 ->where('status', 1)
-//                 ->where('user_id', $uid)
-//                 ->update(['status' => 2]);
-
-//             if ($update_payin) {
-
-//                 // user data
-//                 $user = DB::table('users')->where('id', $uid)->first();
-//                 $referuserid = $user->referral_user_id;
-//                 $first_recharge = $user->first_recharge;
-
-//                 // FIRST RECHARGE BONUS CALCULATION (10%)
-//                 $bonus = 0;
-//                 if ($first_recharge == 0) {
-//                     $bonus = ($cash * 10) / 100;  // 10% EXTRA BONUS
-//                 }
-
-//                 // Insert in extra_first_deposit_bonus_claim only if first recharge
-//                 if ($first_recharge == 0) {
-//                     DB::insert("INSERT INTO extra_first_deposit_bonus_claim 
-//                         (`userid`, `extra_fdb_id`, `bonus`, `status`, `created_at`, `updated_at`)
-//                         VALUES ('$uid','1','$bonus','0','$datetime','$datetime')");
-//                 }
-
-//                 // Update User Wallet
-//                 DB::update("UPDATE users 
-//                     SET 
-//                         wallet = wallet + $cash + $bonus,
-//                         recharge = recharge + $cash,
-//                         total_payin = total_payin + $cash,
-//                         no_of_payin = no_of_payin + 1,
-//                         deposit_balance = deposit_balance + $cash,
-//                         first_recharge = IF(first_recharge = 0, 1, first_recharge),
-//                         first_recharge_amount = IF(first_recharge = 0, $cash, first_recharge_amount)
-//                     WHERE id = $uid");
-
-//                 // Update referral user yesterday stats
-//                 if ($referuserid != 0) {
-//                     DB::update("UPDATE users SET 
-//                         yesterday_payin = yesterday_payin + $cash,
-//                         yesterday_no_of_payin = yesterday_no_of_payin + 1,
-//                         yesterday_first_deposit = yesterday_first_deposit + IF($first_recharge = 0, $cash, 0)
-//                     WHERE id = $referuserid");
-//                 }
-
-//                 return redirect()->away('https://root.winbhai.in/uploads/payment_success.php');
-//             } 
-//             else {
-//                 return response()->json(['status' => 400, 'message' => 'Failed to update payment status!']);
-//             }
-
-//         } else {
-//             return response()->json(['status' => 400, 'message' => 'Order id not found or already processed']);
-//         }
-
-//     } else {
-// 		 $update_payin = DB::table('payins')
-//                 ->where('order_id', $orderid)
-//                 ->where('status', 1)
-//                 ->where('user_id', $uids)
-//                 ->update(['status' => 3]);
-
-//         return redirect()->away('https://root.winbhai.in/uploads/failed.php');
-		
-//     }
-// }
-
-
-    
-//     public function bappa_venture(Request $request) /// bappaventures
-//     {
-       
-//          $validator = Validator::make($request->all(), [
-//             'user_id' => 'required|exists:users,id',
-//             'cash' => 'required',
-//             'type' => 'required',
-//             'coupon_id' => 'nullable|exists:coupons,id',  // ⭐ new coupon parameter
-//         ]);
-//         $validator->stopOnFirstFailure();
-
-//         if ($validator->fails()) {
-//             $response = [
-//                 'status' => 400,
-//                 'message' => $validator->errors()->first()
-//             ];
-
-//             return response()->json($response);
-//         }
-
-        
-        
-//     	$cash = $request->cash;
-//         // $extra_amt = $request->extra_cash;
-//          $type = $request->type;
-//         $userid = $request->user_id;
-//          $coupon_id = $request->coupon_id;
-//           $bonus = 0;
-// 	   //	$total_amt=$cash+$extra_amt+$bonus;
-		 
-//               $date = date('YmdHis');
-//         $rand = rand(11111, 99999);
-//         $orderid = $date . $rand;
-//         $datetime=now();
-//         $check_id = DB::table('users')->where('id',$userid)->first();
-//         $merchantid =DB::table('admin_settings')->where('id',12)->value('longtext');
-        
-        
-        
-//         //  1️⃣  COUPON LOGIC STARTS  
-//     // ======================================================
-//     if (!empty($coupon_id)) {
-
-//         // fetch coupon
-//         $coupon = DB::table('coupons')
-//             ->where('id', $coupon_id)
-//             ->where('status', 1)
-//             ->first();
-
-//         if (!$coupon) {
-//             return response()->json(['status' => 400, 'message' => 'Invalid or expired coupon']);
-//         }
-
-//         // check if user already used this coupon
-//         $used = DB::table('coupon_history')
-//             ->where('user_id', $userid)
-//             ->where('coupon_id', $coupon_id)
-//             ->exists();
-
-//         if ($used) {
-//             return response()->json([
-//                 'status' => 400,
-//                 'message' => 'You have already used this coupon'
-//             ]);
-//         }
-
-//         // calculate bonus
-//         $bonus = ($cash * $coupon->percentage) / 100;
-
-//         // store coupon usage
-//         DB::table('coupon_history')->insert([
-//             'user_id' => $userid,
-//             'coupon_id' => $coupon_id,
-//             'used_at' => now()
-//         ]);
-//     }
-
-//     // TOTAL AMOUNT = cash + bonus
-//     $totalAmount = $cash + $bonus;
-        
-        
-        
-//         if($type == 1){
-//         if ($check_id) {
-//             $redirect_url = env('APP_URL')."api/checkPayment?order_id=$orderid";
-//             //dd($redirect_url);
-//             $insert_payin = DB::table('payins')->insert([
-//                 'user_id' => $request->user_id,
-//               'cash' => $totalAmount,      // ⭐ TOTAL AMOUNT save
-//                 'extra_cash' => $bonus,
-//                 'type' => $request->type,
-//                 'order_id' => $orderid,
-//                 'redirect_url' => $redirect_url,
-//                 'status' => 1, // Assuming initial status is 0
-// 				'typeimage'=>"https://root.winbhai.in/uploads/fastpay_image.png",
-//                 'created_at'=>$datetime,
-//                 'updated_at'=>$datetime
-//             ]);
-//          // dd($redirect_url);
-//             if (!$insert_payin) {
-//                 return response()->json(['status' => 400, 'message' => 'Failed to store record in payin history!']);
-//             }
- 
-//             $postParameter = [
-//                 'merchantid' =>$merchantid,
-//                 'orderid' => $orderid,
-//                 'amount' => $request->cash,
-//                 'name' => $check_id->u_id,
-//                 'email' => "abc@gmail.com",
-//                 'mobile' => $check_id->mobile,
-//                 'remark' => 'payIn',
-//                 'type'=>$request->cash,
-//                 'redirect_url' => "https://root.winbhai.in/api/checkPayment?order_id=$orderid"
-//               // 'redirect_url' => config('app.base_url') ."/api/checkPayment?order_id=$orderid"
-//             ];
-// //echo json_encode($postParameter);die;
-
-//             $curl = curl_init();
-
-//             curl_setopt_array($curl, array(
-//                 CURLOPT_URL => 'https://bappaventures.com/api/paynow',
-//                 CURLOPT_RETURNTRANSFER => true,
-//                 CURLOPT_ENCODING => '',
-//                 CURLOPT_MAXREDIRS => 10,
-//                 CURLOPT_TIMEOUT => 0, 
-//                 CURLOPT_FOLLOWLOCATION => true,
-//                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-//                 CURLOPT_CUSTOMREQUEST => 'POST',
-//                 CURLOPT_POSTFIELDS => json_encode($postParameter),
-//                 CURLOPT_HTTPHEADER => array(
-//                     'Content-Type: application/json',
-//                     'Cookie: ci_session=1ef91dbbd8079592f9061d5df3107fd55bd7fb83'
-//                 ),
-//             ));
-
-//             $response = curl_exec($curl);
-//             curl_close($curl);
-             
-// 			echo $response;
-			
-//         } else {
-//             return response()->json([
-//                 'status' => 400,
-//                 'message' => 'Internal error!'
-//             ]);
-//         }
-            
-//         }else{
-//           return response()->json([
-//                 'status' => 400,
-//                 'message' => 'Something went is wrong ....!'
-//             ]); 
-//         }
-//     }
     
 	public function payzaaar(Request $request)
     {
@@ -1198,11 +962,25 @@ public function checkPayment(Request $request)
         $path = asset('usdt_images/' . $newName);
     }
 
+    
+    
+            // Get dynamic USDT deposit rate
+        $depoistrateusdt = DB::table('payment_limits')
+            ->where('id', 13)
+            ->value('amount');
+        
+        if (!$depoistrateusdt) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'USDT rate not found'
+            ]);
+        }
+
     // Handle type == 0 (payin logic)
     if ($type == 1) {
         $insert_usdt = DB::table('payins')->insert([
             'user_id' => $userid,
-            'cash' => $usdt * 90,
+            'cash' => $usdt * $depoistrateusdt,
             'usdt_amount' => $inr,
             'type' => '1',
             'typeimage' => $path,

@@ -10,54 +10,58 @@ class ManualWidthdrawController extends Controller
 
 public function manual_widthdrawl_index($id)
 {
-    // Fetch all records from the USDT withdrawal history
-     $widthdrawls = DB::select("
-        SELECT 
-            withdraw_histories.*, 
-            users.username AS uname, 
-            users.mobile AS mobile, 
-            withdraw_histories.usdt_wallet_address AS beneficiary_name
-        FROM 
-            withdraw_histories 
-        JOIN 
-            users ON withdraw_histories.user_id = users.id 
-        WHERE 
-            withdraw_histories.type = 1
-            AND withdraw_histories.status = ?
-    ", [$id]);
+   $widthdrawls = DB::select("
+    SELECT 
+        withdraw_histories.*, 
+        users.username AS uname, 
+        users.mobile AS mobile,
 
-    // Check if any withdrawal records exist
-    if (empty($widthdrawls)) {
-        // Handle the case where no withdrawals were found (optional)
-        // e.g., set a flash message, log, etc.
-    }
+        account_details.upi_id,
+        account_details.name AS account_holder_name,
+        account_details.account_number,
+        account_details.ifsc_code
 
-    // Pass the data to the view and load the 'usdt_withdraw.index' Blade file
+    FROM withdraw_histories 
+
+    JOIN users 
+        ON withdraw_histories.user_id = users.id 
+
+    LEFT JOIN account_details 
+        ON account_details.id = (
+            SELECT id FROM account_details 
+            WHERE account_details.user_id = withdraw_histories.user_id 
+            ORDER BY id DESC LIMIT 1
+        )
+
+    WHERE withdraw_histories.type = 1
+    AND withdraw_histories.status = ?
+", [$id]);
+
     return view('manual_withdraw.index', compact('widthdrawls'))->with('id', $id);
 }
 
-public function manual_success(Request $request, $id)
-{
-    $request->validate([
-        'pin' => 'required|numeric',
-    ]);
-
-    $pin = 2020;
-    $inputPin = $request->input('pin');
-
-    if ($inputPin != $pin) {
-        return redirect()->back()
-            ->withInput()
-            ->withErrors(['pin' => 'Invalid pin. Please try again.']);
+    public function manual_success(Request $request, $id)
+    {
+        $request->validate([
+            'pin' => 'required|numeric',
+        ]);
+    
+        $pin = 2020;
+        $inputPin = $request->input('pin');
+    
+        if ($inputPin != $pin) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['pin' => 'Invalid pin. Please try again.']);
+        }
+    
+        DB::table('withdraw_histories')
+            ->where('id', $id)
+            ->update(['status' => 2]);
+    
+        return redirect()->route('manual_widthdrawl', ['id' => $id, 'status' => 1])
+                         ->with('success', 'Withdrawal approved successfully!');
     }
-
-    DB::table('withdraw_histories')
-        ->where('id', $id)
-        ->update(['status' => 2]);
-
-    return redirect()->route('manual_widthdrawl', ['id' => $id, 'status' => 1])
-                     ->with('success', 'Withdrawal approved successfully!');
-}
 
    
 

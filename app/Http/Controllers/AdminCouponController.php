@@ -48,7 +48,7 @@ class AdminCouponController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Slider updated successfully',
-            'image_url' => "https://root.winbhai.in/public/game_subcat_sliders/" . $imageName
+            'image_url' => "https://root.nexwin.vip/public/game_subcat_sliders/" . $imageName
         ]);
     }
     

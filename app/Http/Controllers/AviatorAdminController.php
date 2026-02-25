@@ -7,24 +7,6 @@ use DB;
 use Illuminate\Support\Facades\Storage;
 class AviatorAdminController extends Controller
 {
-      
-
-//   public function aviator_prediction_create(string $game_id)
-//     {
-	    
-// 	    $perPage = 10;
-	   
-// 		$results = DB::table('aviator_result')
-// 			->join('game_settings', 'aviator_result.game_id', '=', 'game_settings.id')
-// 			->where('aviator_result.game_id', $game_id)
-// 			->orderByDesc('aviator_result.id')
-// 			->first();
-
-//         $aviator_res = DB::table('aviator_result')->where('game_id',5)->orderByDesc('id')->paginate($perPage);
-
-	   
-//         return view('aviator.result')->with('results', $results)->with('game_id', $game_id)->with('aviator_res',$aviator_res);
-//     }
 
  public function aviator_prediction_create(string $game_id)
 {

@@ -56,6 +56,41 @@ class AdminNotificationController extends Controller
         $users = DB::table('users')->select('id','username')->get();
         return view('notification_admin.index', compact('users'));
     }
+	
+	//Admin Notification Controller Deposit
+	
+	
+	  // 📌 Notification List
+    public function list()
+    {
+        $notifications = DB::table('admin_notifications')
+            ->orderBy('status', 'asc') // unread first
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view(
+            'admin.notifications.list',
+            compact('notifications')
+        );
+    }
+
+    // 📌 View Notification
+    public function view($id)
+    {
+        // mark clicked notification as READ
+        DB::table('admin_notifications')
+            ->where('id', $id)
+            ->update(['status' => 1]);
+
+        $notification = DB::table('admin_notifications')
+            ->where('id', $id)
+            ->first();
+
+        return view(
+            'admin.notifications.view',
+            compact('notification')
+        );
+    }
 
    
 }

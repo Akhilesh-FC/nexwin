@@ -9,12 +9,6 @@ use DB;
 
 class ColourPredictionController extends Controller
 {
-//   public function colour_prediction_create($gameid)
-//     {
-//         $bets = DB::select("SELECT betlogs.*,game_settings.winning_percentage AS parsantage ,game_settings.id AS id FROM `betlogs` LEFT JOIN game_settings ON betlogs.game_id=game_settings.id where betlogs.game_id=$gameid Limit 10;");
-
-//         return view('colour_prediction.index')->with('bets', $bets)->with('gameid', $gameid);
-//     }
 
 public function colour_prediction_create($gameid)
 {
@@ -174,20 +168,6 @@ $winSummary = DB::table('bets')
         return redirect()->back()->with('success', 'Future result added successfully.');
     }
   
-
-// public function update(Request $request)
-//       {
-// 	   //dd($request);
-
-// 	   $gamid=$request->id;
-	
-//         $parsantage=$request->parsantage;
-//               $data= DB::select("UPDATE `game_settings` SET `winning_percentage` = '$parsantage' WHERE `id` ='$gamid'");
-	         
-         
-//              return redirect()->back();
-          
-//       }
 
 public function color_update(Request $request)
       {
