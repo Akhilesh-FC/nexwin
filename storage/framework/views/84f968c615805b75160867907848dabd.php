@@ -123,7 +123,9 @@
     <!-- Left Side -->
     <div class="col-md-6">
         <div class="game-header">
-            Period No - <?php echo e($results->game_sr_num ?? '-'); ?>
+            <!--Period No - <?php echo e($results->game_sr_num ?? '-'); ?>-->
+            
+            Period No - <?php echo e(isset($results->game_sr_num) ? $results->game_sr_num + 1 : '-'); ?>
 
         </div>
     </div>
@@ -186,33 +188,102 @@
         <button class="btn btn-secondary toggle-btn" data-target="user">User Bets</button>
     </div>
 
-    
-    <div id="table-future" class="toggle-table">
-        <div class="card shadow">
-            <div class="card-header bg-info text-white"><strong>Future Prediction List</strong></div>
-            <div class="card-body table-responsive">
-                <table class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr><th>ID</th><th>Period No</th><th>Predicted Number</th><th>Result</th><th>datetime</th></tr>
-                    </thead>
-                    <tbody>
-                        <?php $__empty_1 = true; $__currentLoopData = $futurePredictions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prediction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                            <tr>
-                                <td><?php echo e($prediction->id); ?></td>
-                                <td><?php echo e($prediction->game_sr_num); ?></td>
-                                <td><?php echo e($prediction->predicted_number); ?></td>
-                                <td><?php echo $prediction->result_number === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">'.$prediction->result_number.'</span>'; ?></td>
-                                <td><?php echo e($prediction->datetime); ?></td>
+    <!---->
+    <!--<div id="table-future" class="toggle-table">-->
+    <!--    <div class="card shadow">-->
+    <!--        <div class="card-header bg-info text-white"><strong>Future Prediction List</strong></div>-->
+    <!--        <div class="card-body table-responsive">-->
+    <!--            <table class="table table-bordered">-->
+    <!--                <thead class="table-dark">-->
+    <!--                    <tr><th>ID</th><th>Period No</th><th>Predicted Number</th><th>Result</th><th>datetime</th></tr>-->
+    <!--                </thead>-->
+    <!--                <tbody>-->
+    <!--                    <?php $__empty_1 = true; $__currentLoopData = $futurePredictions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prediction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>-->
+    <!--                        <tr>-->
+    <!--                            <td><?php echo e($prediction->id); ?></td>-->
+    <!--                            <td><?php echo e($prediction->game_sr_num); ?></td>-->
+    <!--                            <td><?php echo e($prediction->predicted_number); ?></td>-->
+    <!--                            <td><?php echo $prediction->result_number === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">'.$prediction->result_number.'</span>'; ?></td>-->
+    <!--                            <td><?php echo e($prediction->datetime); ?></td>-->
                                
-                            </tr>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                            <tr><td colspan="6" class="text-center">No predictions found.</td></tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+    <!--                        </tr>-->
+    <!--                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>-->
+    <!--                        <tr><td colspan="6" class="text-center">No predictions found.</td></tr>-->
+    <!--                    <?php endif; ?>-->
+    <!--                </tbody>-->
+    <!--            </table>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div>-->
+    
+    
+    
+    
+  
+<div id="table-future" class="toggle-table">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <strong>Future Prediction List</strong>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Period No</th>
+                        <th>Predicted Number</th>
+                        <th>Result</th>
+                        <th>Date Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php $__empty_1 = true; $__currentLoopData = $futurePredictions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prediction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr>
+                            <td><?php echo e($prediction->id); ?></td>
+                            <td><?php echo e($prediction->game_sr_num); ?></td>
+
+                            <td>
+                                <?php echo e(number_format($prediction->predicted_number, 2)); ?>
+
+                            </td>
+
+                            <td>
+                                <?php if($prediction->result_number === 'pending'): ?>
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">
+                                        <?php echo e(number_format($prediction->result_number, 2)); ?>
+
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+
+                            <td><?php echo e($prediction->datetime); ?></td>
+                        </tr>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr>
+                            <td colspan="5" class="text-center text-danger">
+                                No predictions found.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-end">
+                <?php echo e($futurePredictions->links()); ?>
+
             </div>
         </div>
     </div>
+</div>
+    
+    
+    
 
     
     <div id="table-user" class="toggle-table d-none">

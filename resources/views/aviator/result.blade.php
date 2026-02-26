@@ -126,7 +126,9 @@
     <!-- Left Side -->
     <div class="col-md-6">
         <div class="game-header">
-            Period No - {{ $results->game_sr_num ?? '-' }}
+            <!--Period No - {{ $results->game_sr_num ?? '-' }}-->
+            
+            Period No - {{ isset($results->game_sr_num) ? $results->game_sr_num + 1 : '-' }}
         </div>
     </div>
 
@@ -188,33 +190,99 @@
         <button class="btn btn-secondary toggle-btn" data-target="user">User Bets</button>
     </div>
 
-    {{-- 🔹 Future Predictions Table --}}
-    <div id="table-future" class="toggle-table">
-        <div class="card shadow">
-            <div class="card-header bg-info text-white"><strong>Future Prediction List</strong></div>
-            <div class="card-body table-responsive">
-                <table class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr><th>ID</th><th>Period No</th><th>Predicted Number</th><th>Result</th><th>datetime</th></tr>
-                    </thead>
-                    <tbody>
-                        @forelse($futurePredictions as $prediction)
-                            <tr>
-                                <td>{{ $prediction->id }}</td>
-                                <td>{{ $prediction->game_sr_num }}</td>
-                                <td>{{ $prediction->predicted_number }}</td>
-                                <td>{!! $prediction->result_number === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">'.$prediction->result_number.'</span>' !!}</td>
-                                <td>{{ $prediction->datetime }}</td>
+    <!--{{-- 🔹 Future Predictions Table --}}-->
+    <!--<div id="table-future" class="toggle-table">-->
+    <!--    <div class="card shadow">-->
+    <!--        <div class="card-header bg-info text-white"><strong>Future Prediction List</strong></div>-->
+    <!--        <div class="card-body table-responsive">-->
+    <!--            <table class="table table-bordered">-->
+    <!--                <thead class="table-dark">-->
+    <!--                    <tr><th>ID</th><th>Period No</th><th>Predicted Number</th><th>Result</th><th>datetime</th></tr>-->
+    <!--                </thead>-->
+    <!--                <tbody>-->
+    <!--                    @forelse($futurePredictions as $prediction)-->
+    <!--                        <tr>-->
+    <!--                            <td>{{ $prediction->id }}</td>-->
+    <!--                            <td>{{ $prediction->game_sr_num }}</td>-->
+    <!--                            <td>{{ $prediction->predicted_number }}</td>-->
+    <!--                            <td>{!! $prediction->result_number === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">'.$prediction->result_number.'</span>' !!}</td>-->
+    <!--                            <td>{{ $prediction->datetime }}</td>-->
                                
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="text-center">No predictions found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    <!--                        </tr>-->
+    <!--                    @empty-->
+    <!--                        <tr><td colspan="6" class="text-center">No predictions found.</td></tr>-->
+    <!--                    @endforelse-->
+    <!--                </tbody>-->
+    <!--            </table>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div>-->
+    
+    
+    
+    
+  {{-- 🔹 Future Predictions Table --}}
+<div id="table-future" class="toggle-table">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <strong>Future Prediction List</strong>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Period No</th>
+                        <th>Predicted Number</th>
+                        <th>Result</th>
+                        <th>Date Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse($futurePredictions as $prediction)
+                        <tr>
+                            <td>{{ $prediction->id }}</td>
+                            <td>{{ $prediction->game_sr_num }}</td>
+
+                            <td>
+                                {{ number_format($prediction->predicted_number, 2) }}
+                            </td>
+
+                            <td>
+                                @if($prediction->result_number === 'pending')
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+                                @else
+                                    <span class="badge bg-success">
+                                        {{ number_format($prediction->result_number, 2) }}
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>{{ $prediction->datetime }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-danger">
+                                No predictions found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-end">
+                {{ $futurePredictions->links() }}
             </div>
         </div>
     </div>
+</div>
+    
+    
+    
 
     {{-- 🔹 User Bets Table --}}
     <div id="table-user" class="toggle-table d-none">

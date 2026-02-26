@@ -8,84 +8,99 @@ use Illuminate\Support\Facades\Storage;
 class AviatorAdminController extends Controller
 {
 
- public function aviator_prediction_create(string $game_id)
-{
-    $perPage = 10;
-    $today = \Carbon\Carbon::today();
-
-    // 🔹 Latest Aviator Result for Given Game
-    $latestResult = DB::table('aviator_result')
-        ->join('game_settings', 'aviator_result.game_id', '=', 'game_settings.id')
-        ->where('aviator_result.game_id', $game_id)
-        ->orderByDesc('aviator_result.id')
-        ->first();
-
-
-    $period_no=$latestResult->game_sr_num;
-    //dd($period_no);
-
-    // 🔹 Total unique users playing in current period
-    $total_users_playing = DB::table('aviator_bet')
-        ->where('game_sr_num', $period_no)
-        ->distinct('uid')
-        ->count('uid');
-
-    // 🔹 Profit Summary
-
-    // Total profit (all time)
-    $total = DB::table('aviator_bet')
-        ->selectRaw('SUM(amount) as total_amount, SUM(win) as total_win_amount')
-        ->first();
-
-    $total_admin_profit = $total->total_amount - $total->total_win_amount;
-    $total_user_profit = $total->total_win_amount;
-
-    // Today's profit
-    $todayData = DB::table('aviator_bet')
-        ->whereDate('created_at', $today)
-        ->selectRaw('SUM(amount) as today_amount, SUM(win) as today_win_amount')
-        ->first();
-
-    $today_admin_profit = $todayData->today_amount - $todayData->today_win_amount;
-    $today_user_profit = $todayData->today_win_amount;
-
-    // 🔹 Future Predictions with result match (or pending)
-    $futurePredictions = DB::table('aviator_admin_result as fpr')
-        ->select(
-            'fpr.id',
-            'fpr.game_sr_num',
-            'fpr.number as predicted_number',
-            DB::raw('IFNULL(fr.price, "pending") as result_number'),
-            'fpr.datetime'
-        )
-        ->leftJoin('aviator_result as fr', 'fr.game_sr_num', '=', 'fpr.game_sr_num')
-        ->orderByDesc('fpr.id')
-        ->paginate($perPage);
-
-    // 🔹 User Bets
-    $userBets = DB::table('aviator_bet')
-        ->orderByDesc('id')
-        ->paginate($perPage);
-
-    // 🔹 Aviator Results for Game ID = 5 (Hardcoded, if intentional)
-    $aviator_res = DB::table('aviator_result')
-        ->where('game_id', 5)
-        ->orderByDesc('id')
-        ->paginate($perPage);
-
-    // 🔹 Return View
-    return view('aviator.result', [
-        'results' => $latestResult,
-        'game_id' => $game_id,
-        'aviator_res' => $aviator_res,
-        'total_users_playing' => $total_users_playing,
-        'total_admin_profit' => $total_admin_profit,
-        'total_user_profit' => $total_user_profit,
-        'today_admin_profit' => $today_admin_profit,
-        'today_user_profit' => $today_user_profit,
-        'futurePredictions' => $futurePredictions,
-        'userBets' => $userBets,
-    ]);
+    public function aviator_prediction_create(string $game_id)
+    {
+        $perPage = 10;
+        $today = \Carbon\Carbon::today();
+    
+        // 🔹 Latest Aviator Result for Given Game
+        $latestResult = DB::table('aviator_result')
+            ->join('game_settings', 'aviator_result.game_id', '=', 'game_settings.id')
+            ->where('aviator_result.game_id', $game_id)
+            ->orderByDesc('aviator_result.id')
+            ->first();
+    
+    
+        $period_no=$latestResult->game_sr_num;
+        //dd($period_no);
+    
+        // 🔹 Total unique users playing in current period
+        $total_users_playing = DB::table('aviator_bet')
+            ->where('game_sr_num', $period_no)
+            ->distinct('uid')
+            ->count('uid');
+    
+        // 🔹 Profit Summary
+    
+        // Total profit (all time)
+        $total = DB::table('aviator_bet')
+            ->selectRaw('SUM(amount) as total_amount, SUM(win) as total_win_amount')
+            ->first();
+    
+        $total_admin_profit = $total->total_amount - $total->total_win_amount;
+        $total_user_profit = $total->total_win_amount;
+    
+        // Today's profit
+        $todayData = DB::table('aviator_bet')
+            ->whereDate('created_at', $today)
+            ->selectRaw('SUM(amount) as today_amount, SUM(win) as today_win_amount')
+            ->first();
+    
+        $today_admin_profit = $todayData->today_amount - $todayData->today_win_amount;
+        $today_user_profit = $todayData->today_win_amount;
+    
+        // 🔹 Future Predictions with result match (or pending)
+        // $futurePredictions = DB::table('aviator_admin_result as fpr')
+        //     ->select(
+        //         'fpr.id',
+        //         'fpr.game_sr_num',
+        //         'fpr.number as predicted_number',
+        //         DB::raw('IFNULL(fr.price, "pending") as result_number'),
+        //         'fpr.datetime'
+        //     )
+        //     ->leftJoin('aviator_result as fr', 'fr.game_sr_num', '=', 'fpr.game_sr_num')
+        //     ->orderByDesc('fpr.id')
+        //     ->paginate($perPage);
+        
+        
+        
+        // 🔹 Future Predictions - Only Aviator (game_id = 5)
+$futurePredictions = DB::table('aviator_admin_result')
+    ->select(
+        'id',
+        'game_sr_num',
+        DB::raw('ROUND(number,2) as predicted_number'),
+        DB::raw('ROUND(multiplier,2) as result_number'),
+        'datetime'
+    )
+    ->where('game_id', 5)
+    ->orderByDesc('id')
+    ->paginate($perPage);
+    
+        // 🔹 User Bets
+        $userBets = DB::table('aviator_bet')
+            ->orderByDesc('id')
+            ->paginate($perPage);
+    
+        // 🔹 Aviator Results for Game ID = 5 (Hardcoded, if intentional)
+        $aviator_res = DB::table('aviator_result')
+            ->where('game_id', 5)
+            ->orderByDesc('id')
+            ->paginate($perPage);
+    
+        // 🔹 Return View
+        return view('aviator.result', [
+            'results' => $latestResult,
+            'game_id' => $game_id,
+            'aviator_res' => $aviator_res,
+            'total_users_playing' => $total_users_playing,
+            'total_admin_profit' => $total_admin_profit,
+            'total_user_profit' => $total_user_profit,
+            'today_admin_profit' => $today_admin_profit,
+            'today_user_profit' => $today_user_profit,
+            'futurePredictions' => $futurePredictions,
+            'userBets' => $userBets,
+        ]);
 }
 
     public function aviator_fetchDatacolor($game_id)
@@ -95,7 +110,6 @@ class AviatorAdminController extends Controller
 
         return response()->json(['bets' => $bets, 'game_id' => $game_id]);
     }
-	
 	
 	public function aviator_store(Request $request)
 	{
@@ -122,8 +136,8 @@ class AviatorAdminController extends Controller
              return redirect()->back(); 
 	}
   
-   public function aviator_update(Request $request)
-      {
+    public function aviator_update(Request $request)
+    {
 	   //dd($request);
 	     	date_default_timezone_set('Asia/Kolkata');
            $datetime = date('Y-m-d H:i:s');
@@ -139,10 +153,8 @@ class AviatorAdminController extends Controller
 			 return 'Can not update';
 		 }
       }
-   
-      
 	
-	  public function aviator_bet_history(string $game_id)
+	public function aviator_bet_history(string $game_id)
     {
 		  $perPage = 10;
 
@@ -155,8 +167,6 @@ class AviatorAdminController extends Controller
 		  
 	    return view('aviator.bet')->with('bets', $bets); 
 	  }
-	
-	
 
 }
 

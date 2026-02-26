@@ -3911,10 +3911,10 @@ public function delete_usdt_wallet_address(Request $request)
         ], 400);
     }
 
-    if ($amount < 300 || $amount > 25000) {
+    if ($amount < 100 || $amount > 25000) {
         return response()->json([
             'status' => 400,
-            'message' => 'Minimum Withdraw 300 And Maximum Withdraw 25000'
+            'message' => 'Minimum Withdraw 100 And Maximum Withdraw 25000'
         ], 400);
     }
 
