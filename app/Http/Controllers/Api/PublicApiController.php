@@ -3955,6 +3955,43 @@ public function delete_usdt_wallet_address(Request $request)
 
         DB::commit();
 
+        /* ===============================
+                   ✅ TELEGRAM ALERT - WITHDRAW
+                ================================ */
+                
+                // user details nikaalo
+                $user = DB::table('users')
+                    ->where('id', $userid)
+                    ->first();
+                
+                $username = $user ? $user->username : "User";
+                
+                // .env se lo (recommended)
+                $botToken = env('TELEGRAM_BOT_TOKEN');
+                $chatId   = env('TELEGRAM_CHAT_ID');
+                
+                // agar direct private bhejna hai to
+                // $chatId = "7450094939";
+                
+                $message = "🏧 *New Withdraw Request*\n\n"
+                         . "👤 User: {$username}\n"
+                         . "💵 Amount: ₹{$amount}\n"
+                         . "🆔 Order ID: {$orderid}\n"
+                         . "📅 Date: " . now();
+                
+                $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                    'chat_id' => $chatId,
+                    'text' => $message,
+                    'parse_mode' => 'Markdown'
+                ]);
+                
+                if (!$response->ok()) {
+                    \Log::error("Telegram Withdraw Error: " . $response->body());
+                }
+                 /* ===============================
+                   ✅ TELEGRAM ALERT - WITHDRAW   END
+                ================================ */
+    
         return response()->json([
             'status' => 200,
             'message' => 'Withdraw Request Successfully..!'
@@ -3970,6 +4007,8 @@ public function delete_usdt_wallet_address(Request $request)
         ], 500);
     }
 }
+
+
     public function claim_list(Request $request)
     {
        

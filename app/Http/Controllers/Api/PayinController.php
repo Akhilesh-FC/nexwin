@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
+
 class PayinController extends Controller
 {
     
@@ -185,13 +186,36 @@ class PayinController extends Controller
         'created_at' => now(),
         'updated_at' => now()
     ]);
-        
-        
-        
         // end admin notification 
         
         
-    
+  /* ===============================
+   ✅ TELEGRAM ALERT (PRIVATE)
+================================ */
+
+$botToken = "8610933828:AAFUFQyETDONH1seB_v7bjEFWXal0m88myw";
+$chatId   = "7450094939"; // Kabir private ID
+
+$message = "💰 New Manual Deposit\n\n"
+         . "👤 User: {$username}\n"
+         . "💵 Amount: ₹{$inr}\n"
+         . "🎁 Bonus: ₹{$bonus}\n"
+         . "🧾 UTR: {$transaction_id}\n"
+         . "🆔 Order ID: {$orderid}\n"
+         . "📅 Date: {$datetime}";
+
+$response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+    'chat_id' => $chatId,
+    'text'    => $message,
+]);
+
+if (!$response->ok()) {
+    \Log::error("Telegram Error: " . $response->body());
+}
+
+
+
+
         return response()->json([
             'status' => 200,
             'message' => 'Manual Payment Request sent successfully. Please wait for admin approval.'
