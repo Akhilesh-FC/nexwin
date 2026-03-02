@@ -2500,19 +2500,19 @@ if ($giftClaims->isNotEmpty()) {
             return response()->json(['status' => 400, 'message' => 'User not found.'], 400);
         }
     
-        if ($user->recharge > 0) {
-            return response()->json([
-                'status' => 400,
-                'message' => 'Need to bet amount 0 to be able to Withdraw.'
-            ], 400);
-        }
+        // if ($user->recharge > 0) {
+        //     return response()->json([
+        //         'status' => 400,
+        //         'message' => 'Need to bet amount 0 to be able to Withdraw.'
+        //     ], 400);
+        // }
     
-        if ($user->first_recharge != 1) {
-            return response()->json([
-                'status' => 400,
-                'message' => 'First recharge is mandatory.'
-            ], 400);
-        }
+        // if ($user->first_recharge != 0) {
+        //     return response()->json([
+        //         'status' => 400,
+        //         'message' => 'First recharge is mandatory.'
+        //     ], 400);
+        // }
     
         // 5. Check wallet balance
         if ($user->wallet < $amount_inr) {
@@ -2594,21 +2594,50 @@ if (!$depoistrateusdt) {
     
             DB::commit();
     
-            return response()->json([
-                'status' => 200,
-                'message' => 'USDT Withdrawal request submitted successfully'
-            ], 200);
-    
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // Log the error if you have logging
-            // Log::error('usdtwithdraw error: '.$e->getMessage());
-            return response()->json([
-                'status' => 500,
-                'message' => 'Something went wrong. Please try again.'
-            ], 500);
+             /* ===============================
+           ✅ TELEGRAM ALERT - USDT WITHDRAW
+        ================================ */
+
+        $username = $user->username ?? "User";
+
+        $botToken = "8610933828:AAFUFQyETDONH1seB_v7bjEFWXal0m88myw";
+        $chatId   = "7450094939";
+
+        $message = "🏧 *New USDT Withdraw Request*\n\n"
+                 . "👤 User: {$username}\n"
+                 . "💲 USDT: {$usdt_amount}\n"
+                 . "💵 INR Deducted: ₹{$amount_inr}\n"
+                 . "🏦 Wallet: {$walletRow->wallet_address}\n"
+                 . "🆔 Order ID: {$order_id}\n"
+                 . "📅 Date: " . now();
+
+        $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            'chat_id' => $chatId,
+            'text' => $message,
+            'parse_mode' => 'Markdown'
+        ]);
+
+        if (!$response->ok()) {
+            \Log::error("Telegram USDT Withdraw Error: " . $response->body());
         }
+
+        /* =============================== */
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'USDT Withdrawal request submitted successfully'
+        ], 200);
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'status' => 500,
+            'message' => 'Something went wrong. Please try again.'
+        ], 500);
     }
+}
 	
     public function getAllNotices()
     {
@@ -3084,7 +3113,7 @@ Main aapke liye sukhad gaming aur dher saare munaafe ki kaamna karta hoon!",
             'userimage'      => $baseUrl . "/uploads/profileimage/1.png",
             'status'         => 1,
             'referral_code'  => $randomReferralCode,
-            'wallet'         => 0,
+            'wallet'         => 51,
             'country_code'   => $request->country_code,
             'created_at'     => now(),
             'updated_at'     => now(),
@@ -3967,11 +3996,15 @@ public function delete_usdt_wallet_address(Request $request)
                 $username = $user ? $user->username : "User";
                 
                 // .env se lo (recommended)
-                $botToken = env('TELEGRAM_BOT_TOKEN');
-                $chatId   = env('TELEGRAM_CHAT_ID');
+                // $botToken = env('TELEGRAM_BOT_TOKEN');
+                // $chatId   = env('TELEGRAM_CHAT_ID');
                 
                 // agar direct private bhejna hai to
                 // $chatId = "7450094939";
+                
+                
+                $botToken = "8610933828:AAFUFQyETDONH1seB_v7bjEFWXal0m88myw";
+                $chatId   = "7450094939"; // Kabir private ID
                 
                 $message = "🏧 *New Withdraw Request*\n\n"
                          . "👤 User: {$username}\n"
