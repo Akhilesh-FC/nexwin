@@ -288,31 +288,71 @@ FROM users;");
     
     public function password_change(Request $request)
 {
-    // ✅ Get user by email
+    $old_email = $request->old_email;
+    $new_email = $request->new_email;
+    $old_password = $request->password;
+    $new_password = $request->npassword;
+
+    // ✅ Check old email + password
     $user = DB::table('users')
-        ->where('email', $request->email)
+        ->where('email', $old_email)
+        ->where('password', $old_password)
         ->first();
 
-    // ❌ Invalid credentials
-    if (!$user || $user->password !== $request->password) {
-        session()->flash('msg', 'Invalid credentials');
+    if (!$user) {
+
+        session()->flash('msg', 'Old Email or Password Incorrect');
+        session()->flash('msg_class', 'danger');
+
         return redirect()->route('change_password');
     }
 
-    // ✅ Update password & invalidate session
+    // ✅ Update Email + Password
     DB::table('users')
         ->where('id', $user->id)
         ->update([
-            'password'            => $request->npassword,
+            'email' => $new_email,
+            'password' => $new_password,
             'password_changed_at' => now(),
-            'session_id'          => null,
+            'session_id' => null,
         ]);
 
-    // ✅ Logout user
     session()->flush();
 
-    return redirect()->route('login');
+    return redirect()->route('login')
+    ->with([
+        'msg' => 'Email & Password Updated Successfully',
+        'msg_class' => 'success'
+    ]);
 }
+    
+//     public function password_change(Request $request)
+//     {
+//     // ✅ Get user by email
+//     $user = DB::table('users')
+//         ->where('email', $request->email)
+//         ->first();
+
+//     // ❌ Invalid credentials
+//     if (!$user || $user->password !== $request->password) {
+//         session()->flash('msg', 'Invalid credentials');
+//         return redirect()->route('change_password');
+//     }
+
+//     // ✅ Update password & invalidate session
+//     DB::table('users')
+//         ->where('id', $user->id)
+//         ->update([
+//             'password'            => $request->npassword,
+//             'password_changed_at' => now(),
+//             'session_id'          => null,
+//         ]);
+
+//     // ✅ Logout user
+//     session()->flush();
+
+//     return redirect()->route('login');
+// }
 
 
 }

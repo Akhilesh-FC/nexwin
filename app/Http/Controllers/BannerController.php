@@ -16,11 +16,11 @@ class BannerController extends Controller
         return view('banner.index', compact('banner'));
     }
     
-   public function banner_store(Request $request)
-{
+    public function banner_store(Request $request)
+    {
     $request->validate([
         'image' => 'required|image',
-        'activity_image' => 'required|image',
+       // 'activity_image' => 'required|image',
         'title' => 'required',
         'link' => 'nullable|string',
         'active_from' => 'nullable|date'
@@ -31,8 +31,8 @@ class BannerController extends Controller
     $imageName = time().'_'.$request->image->getClientOriginalName();
     $request->image->move(public_path($destinationPath), $imageName);
 
-    $activityImageName = time().'_act_'.$request->activity_image->getClientOriginalName();
-    $request->activity_image->move(public_path($destinationPath), $activityImageName);
+    //$activityImageName = time().'_act_'.$request->activity_image->getClientOriginalName();
+    //$request->activity_image->move(public_path($destinationPath), $activityImageName);
 
     // 🔑 active_from logic
     $activeFrom = $request->active_from ?? now();
@@ -40,7 +40,7 @@ class BannerController extends Controller
     DB::table('sliders')->insert([
         'title'          => $request->title,
         'image'          => url($destinationPath.'/'.$imageName),
-        'activity_image' => url($destinationPath.'/'.$activityImageName),
+       // 'activity_image' => url($destinationPath.'/'.$activityImageName),
         'link'           => $request->link,
         'active_from'    => $activeFrom,
         'status'         => 1,
@@ -50,9 +50,6 @@ class BannerController extends Controller
 
     return redirect()->route('banner')->with('success','Banner added successfully');
 }
-
-    
-
 
     public function banner_update(Request $request, $id)
     {

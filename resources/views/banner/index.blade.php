@@ -27,7 +27,7 @@
                   <th>ID</th>
                   <th>Title</th>
                   <th>Image</th>
-                  <th>Activity Image</th>
+                  <!--<th>Activity Image</th>-->
                   <th>Link</th>
                   <th>Active From</th>
                   <th>Action</th>
@@ -41,9 +41,9 @@
                   <td>
                     <img src="{{ $item->image }}" width="60">
                   </td>
-                  <td>
-                    <img src="{{ $item->activity_image }}" width="60">
-                  </td>
+                  <!--<td>-->
+                  <!--  <img src="{{ $item->activity_image }}" width="60">-->
+                  <!--</td>-->
                   <td>
                     {{ $item->link ?? '—' }}
                   </td>
@@ -110,10 +110,10 @@
                             <input type="file" name="image" class="form-control">
                           </div>
 
-                          <div class="form-group">
-                            <label>Activity Image</label>
-                            <input type="file" name="activity_image" class="form-control">
-                          </div>
+                          <!--<div class="form-group">-->
+                          <!--  <label>Activity Image</label>-->
+                          <!--  <input type="file" name="activity_image" class="form-control">-->
+                          <!--</div>-->
                         </div>
 
                         <div class="modal-footer">
@@ -177,10 +177,10 @@
             <input type="file" class="form-control" name="image" required>
           </div>
 
-          <div class="form-group">
-            <label>Activity Image</label>
-            <input type="file" class="form-control" name="activity_image" required>
-          </div>
+          <!--<div class="form-group">-->
+          <!--  <label>Activity Image</label>-->
+          <!--  <input type="file" class="form-control" name="activity_image" required>-->
+          <!--</div>-->
 
         </div>
 

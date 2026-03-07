@@ -313,6 +313,9 @@ Route::post('/manual_qr/status/{id}',  [Manual_qr_Controller::class, 'updateStat
     Route::get('/gift-index',[GiftController::class, 'index'])->name('gift');
     Route::post('/gift-store',[GiftController::class, 'gift_store'])->name('gift.store');
     Route::get('/giftredeemed',[GiftController::class, 'giftredeemed'])->name('giftredeemed');
+    
+    Route::get('/gift-delete/{id}',[GiftController::class,'gift_delete'])->name('gift.delete');
+    Route::post('/gift-update/{id}',[GiftController::class,'gift_update'])->name('gift.update');
 
    //Banner
     Route::get('/banner-index',[BannerController::class, 'index'])->name('banner');

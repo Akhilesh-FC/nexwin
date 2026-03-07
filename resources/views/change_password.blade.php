@@ -21,18 +21,24 @@
                      @endif
                       <fieldset>
                          <div class="field">
-                            <label class="label_field">Email</label>
-                            <input type="email" name="email" placeholder="Enter Email" required/>
-                         </div>
-                         <div class="field">
-                            <label class="label_field">Old Password</label>
-                            <input type="password" name="password" placeholder="Old Password" required/>
-                         </div>
-                         <div class="field">
-                            <label class="label_field">New Password</label>
-                            <input type="password" name="npassword" placeholder="New Password" required/>
-                         </div>
-						  
+   <label class="label_field">Old Email</label>
+   <input type="email" name="old_email" placeholder="Enter Old Email" required/>
+</div>
+
+<div class="field">
+   <label class="label_field">New Email</label>
+   <input type="email" name="new_email" placeholder="Enter New Email" required/>
+</div>
+
+<div class="field">
+   <label class="label_field">Old Password</label>
+   <input type="password" name="password" placeholder="Old Password" required/>
+</div>
+
+<div class="field">
+   <label class="label_field">New Password</label>
+   <input type="password" name="npassword" placeholder="New Password" required/>
+</div>
                          {{-- <div class="field">
                             <label class="label_field hidden">hidden label</label>
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"> Remember Me</label>

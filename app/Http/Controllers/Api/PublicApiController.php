@@ -5439,7 +5439,7 @@ return response()->json([
             SELECT 
                 title AS name,
                 image,
-                activity_image,
+               
                 link
             FROM sliders
             WHERE status = 1

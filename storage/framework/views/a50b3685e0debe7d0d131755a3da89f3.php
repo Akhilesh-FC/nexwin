@@ -286,9 +286,9 @@ $unreadCount = DB::table('admin_notifications')
                     <li><a href="<?php echo e(route('banner')); ?>"><i class="fa fa-picture-o" aria-hidden="true"></i> <span> Activity & Banner</span></a></li> 
                     <?php endif; ?>
                     
-                    <?php if(in_array('game_slider_img', $allowed)): ?>
-                    <li><a href="<?php echo e(route('game_slider_img')); ?>"><i class="fa fa-picture-o" aria-hidden="true"></i> <span> Game Banner</span></a></li> 
-                    <?php endif; ?>
+                    <!--<?php if(in_array('game_slider_img', $allowed)): ?>-->
+                    <!--<li><a href="<?php echo e(route('game_slider_img')); ?>"><i class="fa fa-picture-o" aria-hidden="true"></i> <span> Game Banner</span></a></li> -->
+                    <!--<?php endif; ?>-->
                     
                      <?php if(in_array('feedback', $allowed)): ?>
                      <li><a href="<?php echo e(route('feedback')); ?>"><i class="fa fa-file blue1_color"></i> <span>FeedBack</span></a></li>
@@ -409,12 +409,12 @@ $unreadCount = DB::table('admin_notifications')
 					 
 					 
 					  
-					    <?php if(in_array('revenue', $allowed)): ?>
-					  <li><a href="<?php echo e(route('revenues')); ?>"><i class="fa fa-bell  yellow_color"></i> <span>Revenue Update</span></a></li><?php endif; ?>
+					  <!--  <?php if(in_array('revenue', $allowed)): ?>-->
+					  <!--<li><a href="<?php echo e(route('revenues')); ?>"><i class="fa fa-bell  yellow_color"></i> <span>Revenue Update</span></a></li><?php endif; ?>-->
 					  
 					  
-					   <?php if(in_array('sponser', $allowed)): ?>
-					  <li><a href="<?php echo e(route('admin.sponser')); ?>"><i class="fa fa-bell  yellow_color"></i> <span>Sponser</span></a></li><?php endif; ?>
+					  <!-- <?php if(in_array('sponser', $allowed)): ?>-->
+					  <!--<li><a href="<?php echo e(route('admin.sponser')); ?>"><i class="fa fa-bell  yellow_color"></i> <span>Sponser</span></a></li><?php endif; ?>-->
 					  
 					   <?php if(in_array('settings', $allowed)): ?>
                      <li><a href="<?php echo e(route('setting')); ?>"><i class="fa fa-cogs dark_color"></i>

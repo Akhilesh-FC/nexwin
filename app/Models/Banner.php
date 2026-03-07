@@ -16,6 +16,7 @@ class Banner extends Model
         'image',
 		'activity_image',
 		'title',
+		'link',
         'status',
     ];
 }

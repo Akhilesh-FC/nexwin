@@ -33,6 +33,7 @@
                         <th>Date</th>
                         <th>Expire Date</th>
                         <th>Type(Loss/Win)</th>
+                        <th>Action</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -56,8 +57,111 @@
                                 -
                             @endif
                         </td>
+                        <td>
+                           <!-- UPDATE BUTTON -->
+                           <button class="btn btn-warning btn-sm"
+                               data-toggle="modal"
+                               data-target="#editModal{{ $item->id }}">
+                               Update
+                           </button>
+                        
+                           <!-- DELETE BUTTON -->
+                           <a href="{{ route('gift.delete',$item->id) }}"
+                              class="btn btn-danger btn-sm"
+                              onclick="return confirm('Are you sure to delete?')">
+                              Delete
+                           </a>
+                        </td>
 
                      </tr>
+                     
+                     
+                     
+                     <!-- UPDATE MODAL -->
+<div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1">
+ <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+
+   <div class="modal-header">
+     <h5 class="modal-title">Update Gift</h5>
+     <button type="button" class="close" data-dismiss="modal">
+        <span>&times;</span>
+     </button>
+   </div>
+
+   <form action="{{ route('gift.update',$item->id) }}" method="POST">
+    @csrf
+
+    <div class="modal-body">
+     <div class="row">
+
+      <div class="form-group col-md-6">
+        <label>Amount</label>
+        <input type="text" name="amount" class="form-control"
+        value="{{ $item->amount }}">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Percentage</label>
+        <input type="text" name="percentage" class="form-control"
+        value="{{ $item->percentage }}">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Number People</label>
+        <input type="text" name="number_people" class="form-control"
+        value="{{ $item->number_people }}">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Title</label>
+        <input type="text" name="title" class="form-control"
+        value="{{ $item->title }}">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Description</label>
+        <input type="text" name="description" class="form-control"
+        value="{{ $item->description }}">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Expire Date</label>
+        <input type="date" name="expire_date"
+        class="form-control"
+        value="{{ $item->expire_date }}">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Type</label>
+        <select name="type" class="form-control">
+
+          <option value="1"
+          {{ $item->type==1?'selected':'' }}>Loss</option>
+
+          <option value="2"
+          {{ $item->type==2?'selected':'' }}>Win</option>
+
+        </select>
+      </div>
+
+     </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success">
+         Update
+      </button>
+    </div>
+
+   </form>
+
+  </div>
+ </div>
+</div>
+                     
+                     
+                     
                      @endforeach
                   </tbody>
                </table>

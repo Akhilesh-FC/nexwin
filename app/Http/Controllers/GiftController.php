@@ -20,8 +20,6 @@ class GiftController extends Controller
         return view('gift.index')->with('gifts', $gifts);
     }
 
-    
-    
     public function gift_store(Request $request)
     {
         $datetime = now();
@@ -58,17 +56,41 @@ class GiftController extends Controller
             ->route('gift')
             ->with('success', 'Gift Added Successfully!');
     }
+    
+    public function gift_delete($id)
+{
+    DB::delete("DELETE FROM gift_cart WHERE id=?",[$id]);
 
+    return redirect()->route('gift')
+    ->with('success','Gift Deleted Successfully');
+}
 
-    public function gift_store_old(Request $request)
-    {
-		$datetime=now();
-        $amount=$request->amount;
-        $number_people=$request->number_people;
-        $rand=rand(000000000000000,999999999999999);
-        $data = DB::insert("INSERT INTO `gift_cart`(`amount`, `number_people`,`code`,`status`,`datetime`) VALUES ('$amount','$number_people','$rand','1','$datetime')");
-            return redirect()->route('gift')->with('data',$data)->with('success','Gift Added Successfully ..!');    
-    }
+public function gift_update(Request $request,$id)
+{
+    DB::update("
+        UPDATE gift_cart 
+        SET amount=?,
+            percentage=?,
+            number_people=?,
+            title=?,
+            description=?,
+            expire_date=?,
+            type=?
+        WHERE id=?
+    ",[
+        $request->amount,
+        $request->percentage,
+        $request->number_people,
+        $request->title,
+        $request->description,
+        $request->expire_date,
+        $request->type,
+        $id
+    ]);
+
+    return redirect()->route('gift')
+    ->with('success','Gift Updated Successfully');
+}
 	
 	public function giftredeemed()
     {

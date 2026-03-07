@@ -443,32 +443,65 @@ if (!$response->ok()) {
     }
 
     // Handle image saving
+    // $path = '';
+    // if (!empty($image)) {
+    //     $imageData = base64_decode($image);
+    //     if ($imageData === false) {
+    //         return response()->json([
+    //             'status' => 400,
+    //             'message' => 'Invalid base64 encoded image'
+    //         ]);
+    //     }
+
+    //     $newName = Str::random(6) . '.png';
+    //     $relativePath = 'usdt_images/' . $newName;
+
+    //     if (!file_exists(public_path('usdt_images'))) {
+    //         mkdir(public_path('usdt_images'), 0775, true);
+    //     }
+
+    //     if (!file_put_contents(public_path($relativePath), $imageData)) {
+    //         return response()->json([
+    //             'status' => 400,
+    //             'message' => 'Failed to save image'
+    //         ]);
+    //     }
+
+    //     $path = asset('usdt_images/' . $newName);
+    // }
+    
     $path = '';
-    if (!empty($image)) {
-        $imageData = base64_decode($image);
-        if ($imageData === false) {
-            return response()->json([
-                'status' => 400,
-                'message' => 'Invalid base64 encoded image'
-            ]);
-        }
+if (!empty($image)) {
 
-        $newName = Str::random(6) . '.png';
-        $relativePath = 'usdt_images/' . $newName;
+    $imageData = base64_decode($image);
 
-        if (!file_exists(public_path('usdt_images'))) {
-            mkdir(public_path('usdt_images'), 0775, true);
-        }
-
-        if (!file_put_contents(public_path($relativePath), $imageData)) {
-            return response()->json([
-                'status' => 400,
-                'message' => 'Failed to save image'
-            ]);
-        }
-
-        $path = asset('usdt_images/' . $newName);
+    if ($imageData === false) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Invalid base64 encoded image'
+        ]);
     }
+
+    $newName = Str::random(6) . '.png';
+
+    $relativePath = 'usdt_images/' . $newName;
+
+    if (!file_exists(public_path('usdt_images'))) {
+        mkdir(public_path('usdt_images'), 0775, true);
+    }
+
+    if (!file_put_contents(public_path($relativePath), $imageData)) {
+        return response()->json([
+            'status' => 400,
+            'message' => 'Failed to save image'
+        ]);
+    }
+
+    // ✅ Dynamic Full URL
+    $baseUrl = url('/');
+    $path = $baseUrl . '/public/usdt_images/' . $newName;
+
+}
 
     // Get USDT Rate
     $depoistrateusdt = DB::table('payment_limits')
